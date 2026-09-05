@@ -1,0 +1,393 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { DashboardSkeleton } from "@/components/Skeleton";
+import { ContributionStreak } from "@/components/ContributionStreak";
+import { useAuth } from "@/context/AuthContext";
+import { api, BlogSummary, formatUtcDate, extractCoverImage, extractExcerpt } from "@/lib/api";
+import {
+  PenSquare,
+  BookOpen,
+  TrendingUp,
+  Clock,
+  ArrowUpRight,
+  Plus,
+  Copy,
+  Check,
+  BarChart3,
+  Eye,
+  ImageIcon,
+} from "lucide-react";
+
+export default function DashboardPage() {
+  const router = useRouter();
+  const { user, isLoading: isAuthLoading } = useAuth();
+
+  const [blogs, setBlogs] = useState<BlogSummary[]>([]);
+  const [isLoadingBlogs, setIsLoadingBlogs] = useState(true);
+  const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+
+  // Stitch Analytics Controls
+  const [activeMetric, setActiveMetric] = useState<"views" | "visitors" | "subscribers">("views");
+  const [activeRange, setActiveRange] = useState<"7D" | "30D" | "90D" | "1Y">("30D");
+
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      router.replace("/login");
+      return;
+    }
+
+    if (user) {
+      api.blogs
+        .list()
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setBlogs(data);
+          } else {
+            setBlogs([]);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to load stories from DB:", err);
+          setBlogs([]);
+        })
+        .finally(() => {
+          setIsLoadingBlogs(false);
+        });
+    }
+  }, [user, isAuthLoading, router]);
+
+  const handleCopyLink = (slug: string) => {
+    if (typeof window !== "undefined") {
+      const url = `${window.location.origin}/blogs/${slug}`;
+      navigator.clipboard.writeText(url);
+      setCopiedSlug(slug);
+      setTimeout(() => setCopiedSlug(null), 2000);
+    }
+  };
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-[#faf5ee]">
+        <Navbar />
+        <main className="w-full flex-1">
+          <DashboardSkeleton />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  const totalStories = blogs.length;
+
+  return (
+    <div className="min-h-screen flex flex-col bg-[#faf5ee]">
+      <Navbar />
+
+      <main className="w-full pt-28 pb-24 flex-1">
+        <div className="max-w-5xl mx-auto px-6 lg:px-8 space-y-10">
+          {/* Header Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-outline-variant/30">
+            <div>
+              <h1 className="font-headline text-3xl sm:text-4xl text-on-surface font-bold tracking-tight">
+                Welcome, {user?.name || "Writer"}
+              </h1>
+              <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
+                {user?.email}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Link
+                href="/editor/new"
+                className="btn-primary-warm text-xs sm:text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                <span>New Post</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Real Metrics */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="p-6 rounded-2xl bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between text-on-surface-variant mb-3">
+                <span className="text-xs uppercase tracking-wider font-semibold font-body text-secondary">
+                  Published Posts
+                </span>
+                <BookOpen className="w-4 h-4 text-primary" />
+              </div>
+              <div className="font-headline text-3xl sm:text-4xl text-on-surface font-bold">
+                {totalStories}
+              </div>
+              <p className="text-xs text-on-surface-variant mt-2">
+                {totalStories === 1
+                  ? "1 post published"
+                  : `${totalStories} posts published`}
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between text-on-surface-variant mb-3">
+                <span className="text-xs uppercase tracking-wider font-semibold font-body text-secondary">
+                  Total Views
+                </span>
+                <Eye className="w-4 h-4 text-primary" />
+              </div>
+              <div className="font-headline text-3xl sm:text-4xl text-on-surface font-bold text-on-surface-variant/80">
+                —
+              </div>
+              <p className="text-xs text-on-surface-variant mt-2">
+                No view data yet
+              </p>
+            </div>
+
+            <div className="p-6 rounded-2xl bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between text-on-surface-variant mb-3">
+                <span className="text-xs uppercase tracking-wider font-semibold font-body text-secondary">
+                  Subscribers
+                </span>
+                <TrendingUp className="w-4 h-4 text-primary" />
+              </div>
+              <div className="font-headline text-3xl sm:text-4xl text-on-surface font-bold text-on-surface-variant/80">
+                —
+              </div>
+              <p className="text-xs text-on-surface-variant mt-2">
+                No subscriber data yet
+              </p>
+            </div>
+          </div>
+
+          {/* Analytics Section */}
+          <div className="p-7 sm:p-8 rounded-2xl bg-white/80 border border-outline-variant/40 shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="font-headline text-2xl text-on-surface font-bold tracking-tight">
+                  Analytics
+                </h2>
+                <p className="text-xs text-on-surface-variant mt-0.5">
+                  Views &amp; readership metrics
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Metric Selectors */}
+                <div className="inline-flex rounded-lg bg-surface-container p-1 text-xs">
+                  {(["views", "visitors", "subscribers"] as const).map((metric) => (
+                    <button
+                      key={metric}
+                      type="button"
+                      onClick={() => setActiveMetric(metric)}
+                      className={`capitalize px-3 py-1.5 rounded-md font-medium transition-all ${
+                        activeMetric === metric
+                          ? "bg-white shadow-sm text-on-surface font-semibold"
+                          : "text-on-surface-variant hover:text-on-surface"
+                      }`}
+                    >
+                      {metric}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Range Selectors */}
+                <div className="inline-flex rounded-lg bg-surface-container p-1 text-xs">
+                  {(["7D", "30D", "90D", "1Y"] as const).map((range) => (
+                    <button
+                      key={range}
+                      type="button"
+                      onClick={() => setActiveRange(range)}
+                      className={`px-2.5 py-1.5 rounded-md font-medium transition-colors ${
+                        activeRange === range
+                          ? "bg-primary text-white shadow-sm"
+                          : "text-on-surface-variant hover:text-on-surface"
+                      }`}
+                    >
+                      {range}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Clean empty state for metrics until views exist */}
+            <div className="w-full h-48 rounded-xl bg-surface-container-low/40 border border-dashed border-outline-variant/60 flex flex-col items-center justify-center text-center p-6 space-y-2">
+              <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-1">
+                <BarChart3 className="w-5 h-5" />
+              </div>
+              <h3 className="font-headline text-lg font-bold text-on-surface">
+                No analytics data yet
+              </h3>
+              <p className="text-xs text-on-surface-variant max-w-sm leading-relaxed">
+                Reader metrics will automatically appear here once visitors start viewing your posts.
+              </p>
+            </div>
+          </div>
+
+          {/* GitHub-like Contribution Streak Heatmap */}
+          <ContributionStreak blogs={blogs} />
+
+          {/* Posts List from Real Database */}
+          <div className="space-y-6 pt-2">
+            <div className="flex items-center justify-between pb-3 border-b border-outline-variant/30">
+              <h2 className="font-headline text-2xl text-on-surface font-bold tracking-tight">
+                Your Posts
+              </h2>
+              <span className="text-xs text-on-surface-variant font-mono">
+                {totalStories} {totalStories === 1 ? "post" : "posts"}
+              </span>
+            </div>
+
+            {isLoadingBlogs ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="p-6 rounded-2xl bg-white/80 border border-outline-variant/30 flex items-center justify-between gap-6 animate-pulse"
+                  >
+                    <div className="space-y-3 flex-1">
+                      <div className="h-4 w-32 bg-[#e8e0d5]/70 rounded" />
+                      <div className="h-6 w-3/4 bg-[#e8e0d5]/70 rounded-lg" />
+                      <div className="h-3.5 w-1/2 bg-[#e8e0d5]/70 rounded" />
+                    </div>
+                    <div className="h-20 w-24 bg-[#e8e0d5]/70 rounded-xl hidden sm:block shrink-0" />
+                  </div>
+                ))}
+              </div>
+            ) : blogs.length === 0 ? (
+              <div className="p-16 rounded-3xl bg-white/70 border border-dashed border-outline-variant/60 text-center space-y-4 max-w-2xl mx-auto">
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
+                  <PenSquare className="w-7 h-7" />
+                </div>
+                <h3 className="font-headline text-2xl font-bold text-on-surface">
+                  You haven&apos;t written any posts yet
+                </h3>
+                <p className="text-sm text-on-surface-variant max-w-md mx-auto leading-relaxed">
+                  Your space is quiet and ready. Start drafting your first post.
+                </p>
+                <div className="pt-2">
+                  <Link
+                    href="/editor/new"
+                    className="btn-primary-warm text-sm"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Write your first post</span>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {blogs.map((blog, idx) => {
+                  const uniqueKey = blog.id ? String(blog.id) : (blog.slug || `story-${idx}`);
+                  const dateStr = formatUtcDate(blog.created_at);
+                  const coverImage = blog.body ? extractCoverImage(blog.body) : null;
+                  const excerpt = blog.body ? extractExcerpt(blog.body, 140) : "";
+                  const wordCount = blog.body ? blog.body.trim().split(/\s+/).length : 0;
+                  const readTime = Math.max(1, Math.ceil(wordCount / 200));
+
+                  return (
+                    <div
+                      key={uniqueKey}
+                      className="p-6 rounded-2xl bg-white/80 hover:bg-white border border-outline-variant/30 hover:border-primary/40 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6 group"
+                    >
+                      <div className="flex flex-col sm:flex-row items-start gap-4 min-w-0 flex-1">
+                        {coverImage && (
+                          <div className="w-full sm:w-40 h-28 rounded-xl overflow-hidden shrink-0 border border-outline-variant/30 bg-surface-container-low">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={coverImage}
+                              alt={blog.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                            />
+                          </div>
+                        )}
+
+                        <div className="space-y-2 min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2 text-xs">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-primary-fixed text-on-primary-fixed">
+                              Published
+                            </span>
+                            <span className="text-on-surface-variant font-mono">
+                              {dateStr}
+                            </span>
+                            <span className="text-on-surface-variant">·</span>
+                            <span className="text-on-surface-variant font-mono">
+                              By {blog.author_name || user?.name || "You"}
+                            </span>
+                            <span className="text-on-surface-variant">·</span>
+                            <span className="inline-flex items-center gap-1 text-on-surface-variant font-mono">
+                              <Clock className="w-3 h-3" />
+                              {readTime} min read
+                            </span>
+                          </div>
+
+                          <h3 className="font-headline text-xl sm:text-2xl text-on-surface group-hover:text-primary transition-colors font-bold tracking-tight leading-snug">
+                            <Link href={`/blogs/${blog.slug}`}>{blog.title}</Link>
+                          </h3>
+
+                          {excerpt && (
+                            <p className="text-sm text-on-surface-variant font-body line-clamp-2 leading-relaxed">
+                              {excerpt}
+                            </p>
+                          )}
+
+                          <div className="flex items-center gap-3 text-xs text-on-surface-variant pt-1 font-mono">
+                            <span className="text-secondary truncate">
+                              /{blog.slug}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0 self-end md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-outline-variant/20 w-full md:w-auto justify-end">
+                        <button
+                          type="button"
+                          onClick={() => handleCopyLink(blog.slug)}
+                          className="btn-secondary-warm px-3 py-2 text-xs"
+                          title="Copy public link"
+                        >
+                          {copiedSlug === blog.slug ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-600" />
+                              <span className="text-emerald-700">Copied</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span>Copy Link</span>
+                            </>
+                          )}
+                        </button>
+
+                        <Link
+                          href={`/editor/${blog.id}`}
+                          className="btn-secondary-warm px-4 py-2 text-xs font-semibold"
+                        >
+                          Edit
+                        </Link>
+
+                        <Link
+                          href={`/blogs/${blog.slug}`}
+                          className="btn-primary-warm px-4 py-2 text-xs font-semibold"
+                        >
+                          <span>View</span>
+                          <ArrowUpRight className="w-3.5 h-3.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
