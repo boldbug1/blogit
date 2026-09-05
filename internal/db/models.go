@@ -9,10 +9,11 @@ import (
 )
 
 type Author struct {
-	ID        pgtype.UUID
-	Name      string
-	Email     string
-	CreatedAt pgtype.Timestamptz
+	ID           pgtype.UUID
+	Name         string
+	Email        string
+	CreatedAt    pgtype.Timestamptz
+	PasswordHash string
 }
 
 type Blog struct {

@@ -157,13 +157,7 @@ Error shape is consistent: `{"error":"message"}` with appropriate status codes (
 
 Server timeouts are set in `cmd/api/main.go`: Read 5s, Write 10s, Idle 60s.
 
-## Roadmap
 
-- AuthN and AuthZ: email and password, bcrypt, JWT Bearer auth, ownership checks scoped to own `author_id`
-- `POST /auth/register`, `POST /auth/login`, `GET /me`
-- Remove `author_id` from client payload and derive it from token
-- Pagination with `limit` and `offset` on `GET /blogs`
-- `DELETE /blogs/{id}`, roles (`reader`, `author`, `admin`), refresh tokens
 
 ## Contributing
 
@@ -171,4 +165,4 @@ PRs welcome. Keep it stdlib-first: no web framework, keep SQL in `queries/`, reg
 
 ## License
 
-MIT. Add a `LICENSE` file if you plan to open-source.
+MIT

@@ -11,29 +11,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createAuthor = `-- name: CreateAuthor :one
-INSERT INTO authors (name, email)
-VALUES ($1, $2)
-RETURNING id, name, email, created_at
-`
-
-type CreateAuthorParams struct {
-	Name  string
-	Email string
-}
-
-func (q *Queries) CreateAuthor(ctx context.Context, arg CreateAuthorParams) (Author, error) {
-	row := q.db.QueryRow(ctx, createAuthor, arg.Name, arg.Email)
-	var i Author
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Email,
-		&i.CreatedAt,
-	)
-	return i, err
-}
-
 const createBlog = `-- name: CreateBlog :one
 INSERT INTO blogs (author_id, title, slug, body)
 VALUES ($1, $2, $3, $4)
@@ -107,7 +84,7 @@ func (q *Queries) GetBlogBySlug(ctx context.Context, slug string) (GetBlogBySlug
 
 const listBlogs = `-- name: ListBlogs :many
 SELECT 
-    b.id, b.title, b.slug, b.created_at,
+    b.id, b.title, b.slug, b.body, b.created_at,
     a.name AS author_name
 FROM blogs b
 JOIN authors a ON a.id = b.author_id
@@ -124,6 +101,7 @@ type ListBlogsRow struct {
 	ID         pgtype.UUID
 	Title      string
 	Slug       string
+	Body       string
 	CreatedAt  pgtype.Timestamptz
 	AuthorName string
 }
@@ -141,6 +119,7 @@ func (q *Queries) ListBlogs(ctx context.Context, arg ListBlogsParams) ([]ListBlo
 			&i.ID,
 			&i.Title,
 			&i.Slug,
+			&i.Body,
 			&i.CreatedAt,
 			&i.AuthorName,
 		); err != nil {
@@ -158,8 +137,7 @@ const updateBlogById = `-- name: UpdateBlogById :one
 UPDATE blogs
 SET 
     title      = COALESCE($2, title),
-    slug       = COALESCE($3, slug),
-    body       = COALESCE($4, body),
+    body       = COALESCE($3, body),
     updated_at = NOW()
 WHERE id = $1
 RETURNING id, author_id, title, slug, body, created_at, updated_at
@@ -168,17 +146,11 @@ RETURNING id, author_id, title, slug, body, created_at, updated_at
 type UpdateBlogByIdParams struct {
 	ID    pgtype.UUID
 	Title pgtype.Text
-	Slug  pgtype.Text
 	Body  pgtype.Text
 }
 
 func (q *Queries) UpdateBlogById(ctx context.Context, arg UpdateBlogByIdParams) (Blog, error) {
-	row := q.db.QueryRow(ctx, updateBlogById,
-		arg.ID,
-		arg.Title,
-		arg.Slug,
-		arg.Body,
-	)
+	row := q.db.QueryRow(ctx, updateBlogById, arg.ID, arg.Title, arg.Body)
 	var i Blog
 	err := row.Scan(
 		&i.ID,

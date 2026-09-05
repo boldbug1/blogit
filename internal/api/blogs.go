@@ -45,6 +45,9 @@ func (s *Server) handleListBlogs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if blogs == nil {
+		blogs = []db.ListBlogsRow{}
+	}
 	writeJSON(w, http.StatusOK, blogs)
 }
 
@@ -84,8 +87,15 @@ func (s *Server) handleCreateBlog(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var authorUUID pgtype.UUID
-	if err := authorUUID.Scan(req.AuthorID); err != nil {
-		writeError(w, http.StatusBadRequest, "invalid author_id format")
+	if strings.TrimSpace(req.AuthorID) != "" {
+		if err := authorUUID.Scan(req.AuthorID); err != nil {
+			writeError(w, http.StatusBadRequest, "invalid author_id format")
+			return
+		}
+	} else if id, ok := CurrentUserID(r); ok {
+		authorUUID = id
+	} else {
+		writeError(w, http.StatusBadRequest, "author_id is required")
 		return
 	}
 

@@ -5,6 +5,11 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"time"
+	"strings"
+	"net/mail"
+	"blogit/internal/db"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 func writeJSON(w http.ResponseWriter, status int, data any) {
@@ -20,8 +25,8 @@ func writeError(w http.ResponseWriter, status int, message string) {
 }
 
 func readJSON(w http.ResponseWriter, r *http.Request, dst any) error {
-	// Restrict payload size to 1MB to prevent memory exhaustion
-	r.Body = http.MaxBytesReader(w, r.Body, 1048576)
+	// Allow up to 25MB for rich content and inline images
+	r.Body = http.MaxBytesReader(w, r.Body, 26214400)
 
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields() // Catch typos in client request payloads
@@ -38,4 +43,59 @@ func readJSON(w http.ResponseWriter, r *http.Request, dst any) error {
 	}
 
 	return nil
+}
+
+// normalizeEmail trims and lowercases for consistent lookup.
+func normalizeEmail(email string) string {
+  return strings.ToLower(strings.TrimSpace(email))
+}
+
+// validateEmail uses net/mail for format checking.
+func validateEmail(email string) error {
+  email = normalizeEmail(email)
+  if email == "" {
+    return errors.New("email is required")
+  }
+  if _, err := mail.ParseAddress(email); err != nil {
+    return errors.New("invalid email format")
+  }
+  return nil
+}
+
+// validatePassword enforces your open-registration policy.
+func validatePassword(password string) error {
+  if len(password) < 8 {
+    return errors.New("password must be at least 8 characters")
+  }
+  return nil
+}
+
+// validateRegister centralizes checks so register handler stays thin.
+func validateRegister(name, email, password string) error {
+  if strings.TrimSpace(name) == "" {
+    return errors.New("name is required")
+  }
+  if err := validateEmail(email); err != nil {
+    return err
+  }
+  return validatePassword(password)
+}
+
+// isUniqueViolation reports Postgres 23505 for duplicate email to 409 mapping.
+func isUniqueViolation(err error) bool {
+  var pgErr *pgconn.PgError
+  if errors.As(err, &pgErr) {
+    return pgErr.Code == "23505"
+  }
+  return false
+}
+
+// newAuthorResponse maps db.Author to public JSON and never leaks password_hash.
+func newAuthorResponse(a db.Author) authorResponse {
+  return authorResponse{
+    ID:        a.ID.String(),
+    Name:      a.Name,
+    Email:     a.Email,
+    CreatedAt: a.CreatedAt.Time.Format(time.RFC3339),
+  }
 }

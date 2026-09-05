@@ -22,6 +22,13 @@ func main() {
 	if dsn == "" {
 		log.Fatal("DATABASE_URL is not set")
 	}
+	secret := os.Getenv("JWT_SECRET")
+	if secret == ""{
+		log.Fatal("JWT_SECRET not set")
+	}
+	if len(secret) < 32 {
+		log.Fatal("JWT_SECRET must be at least 32 characters")
+	}
 
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
@@ -34,14 +41,14 @@ func main() {
 	}
 
 	queries := db.New(pool)
-	server := api.NewServer(queries)
+	server := api.NewServer(queries,[]byte(secret))
 
 	httpServer := &http.Server{
 		Addr:         ":8080",
 		Handler:      server.Routes(),
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-		IdleTimeout:  60 * time.Second,
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 30 * time.Second,
+		IdleTimeout:  120 * time.Second,
 	}
 
 	log.Println("Server running on http://localhost:8080")

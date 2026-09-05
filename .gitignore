@@ -1,1 +1,11 @@
 .env
+*.exe
+*.test
+/tmp/
+/bin/
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env*.local

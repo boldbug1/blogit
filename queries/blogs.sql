@@ -1,8 +1,3 @@
--- name: CreateAuthor :one
-INSERT INTO authors (name, email)
-VALUES ($1, $2)
-RETURNING *;
-
 -- name: CreateBlog :one
 INSERT INTO blogs (author_id, title, slug, body)
 VALUES ($1, $2, $3, $4)
@@ -18,7 +13,7 @@ WHERE b.slug = $1 LIMIT 1;
 
 -- name: ListBlogs :many
 SELECT 
-    b.id, b.title, b.slug, b.created_at,
+    b.id, b.title, b.slug, b.body, b.created_at,
     a.name AS author_name
 FROM blogs b
 JOIN authors a ON a.id = b.author_id
