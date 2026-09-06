@@ -5,7 +5,7 @@
 
   <p align="center">
     <strong>The modern, distraction-free publishing platform for writers and thinkers.</strong><br />
-    No algorithms, no invasive ads — just your words and your readers.
+    No algorithms, no invasive ads just your words and your readers.
   </p>
 
   <p align="center">
