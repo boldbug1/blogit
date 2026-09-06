@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const coverImage = blog.banner_image || extractCoverImage(blog.body);
 
     return {
-      title: `${blog.title} — Blogit`,
+      title: blog.title,
       description: excerpt,
       openGraph: {
         title: blog.title,

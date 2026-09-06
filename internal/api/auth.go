@@ -70,6 +70,10 @@ func (s *Server) handleGoogleAuth(w http.ResponseWriter, r *http.Request) {
 
 	// Support dev/mock credential prefix for offline local testing: "dev:alice@example.com:Alice Smith"
 	if strings.HasPrefix(req.Credential, "dev:") || strings.HasPrefix(req.Credential, "mock:") {
+		if os.Getenv("ENV") == "production" || os.Getenv("GOOGLE_CLIENT_ID") != "" {
+			writeError(w, http.StatusUnauthorized, "Dev login is disabled in production")
+			return
+		}
 		parts := strings.Split(req.Credential, ":")
 		if len(parts) >= 3 {
 			email = normalizeEmail(parts[1])

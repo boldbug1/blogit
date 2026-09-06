@@ -7,7 +7,7 @@ import { AuroraShader } from "@/components/AuroraShader";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/context/AuthContext";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
-import { AlertCircle, ShieldCheck, Zap, Globe2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -48,7 +48,7 @@ export default function SignUpPage() {
             Create your account
           </h1>
           <p className="font-body text-xs sm:text-sm text-on-surface-variant mt-2 max-w-xs leading-relaxed">
-            Don&apos;t just think, blog it. 1-click access with Google.
+            Join the blogit community. Sign up with Google.
           </p>
         </div>
 
@@ -61,29 +61,13 @@ export default function SignUpPage() {
             </div>
           )}
 
-          {/* 1-Click Google Auth */}
-          <div className="space-y-4">
+          {/* Google Auth */}
+          <div className="w-full">
             <GoogleSignInButton
               text="signup_with"
               onSuccess={handleSuccess}
               onError={(err) => setError(err)}
             />
-          </div>
-
-          {/* Benefits */}
-          <div className="mt-8 pt-6 border-t border-outline-variant/30 space-y-3">
-            <div className="flex items-center gap-2.5 text-xs text-on-surface-variant">
-              <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
-              <span>No password fatigue or weak password meters</span>
-            </div>
-            <div className="flex items-center gap-2.5 text-xs text-on-surface-variant">
-              <Zap className="w-4 h-4 text-primary shrink-0" />
-              <span>Instantly publish stories with zero wait time</span>
-            </div>
-            <div className="flex items-center gap-2.5 text-xs text-on-surface-variant">
-              <Globe2 className="w-4 h-4 text-primary shrink-0" />
-              <span>Direct shareable URL for your articles worldwide</span>
-            </div>
           </div>
         </div>
 
@@ -93,7 +77,7 @@ export default function SignUpPage() {
             href="/login"
             className="text-primary hover:underline font-semibold ml-1 transition-all"
           >
-            Sign in here
+            Sign in
           </Link>
         </div>
       </div>

@@ -47,6 +47,9 @@ export default function BlogDetailClient({ slug }: BlogDetailClientProps) {
         .getBySlug(slug)
         .then((data) => {
           setBlog(data);
+          if (data?.title) {
+            document.title = data.title;
+          }
           setLikesCount(data.likes_count || 0);
           setCommentsCount(data.comments_count || 0);
         })

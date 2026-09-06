@@ -109,13 +109,13 @@ export function GoogleSignInButton({
           )}
         </div>
       ) : (
-        /* Fallback / Dev Mode Button when GOOGLE_CLIENT_ID is not yet configured */
-        <div className="w-full space-y-3">
+        /* Fallback button when NEXT_PUBLIC_GOOGLE_CLIENT_ID is not configured */
+        <div className="w-full">
           <button
             type="button"
             disabled={loading}
             onClick={handleDevLogin}
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-md bg-surface-container-low hover:bg-surface-container border border-outline-variant/50 text-on-surface text-sm font-medium shadow-xs hover:border-primary/40 transition-all duration-200 disabled:opacity-60 cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container border border-outline-variant/60 text-on-surface text-sm font-medium shadow-xs hover:border-primary/40 transition-all duration-200 disabled:opacity-60 cursor-pointer"
           >
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin text-primary" />
@@ -147,10 +147,6 @@ export function GoogleSignInButton({
                 : "Continue with Google"}
             </span>
           </button>
-          <div className="flex items-center justify-center gap-1.5 text-[11px] text-secondary">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Local dev mode active (1-click test login)</span>
-          </div>
         </div>
       )}
     </div>

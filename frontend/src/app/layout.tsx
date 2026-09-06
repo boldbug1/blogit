@@ -20,6 +20,14 @@ export const metadata: Metadata = {
   title: "blogit",
   description:
     "Don't just think, blog it. A minimalist blog publishing platform built with Sun-Baked Simplicity.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/blogit-logo.png", type: "image/png" },
+      { url: "/blogit-logo.svg", type: "image/svg+xml" },
+    ],
+    apple: "/blogit-logo.png",
+  },
 };
 
 export default function RootLayout({

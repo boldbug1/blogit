@@ -7,7 +7,7 @@ import { AuroraShader } from "@/components/AuroraShader";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/context/AuthContext";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
-import { AlertCircle, ShieldCheck, Sparkles, PenLine } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -61,40 +61,24 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* 1-Click Google Auth */}
-          <div className="space-y-4">
+          {/* Google Auth */}
+          <div className="w-full">
             <GoogleSignInButton
               text="continue_with"
               onSuccess={handleSuccess}
               onError={(err) => setError(err)}
             />
           </div>
-
-          {/* Platform Perks */}
-          <div className="mt-8 pt-6 border-t border-outline-variant/30 space-y-3">
-            <div className="flex items-center gap-2.5 text-xs text-on-surface-variant">
-              <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
-              <span>100% verified identities — zero spam or spoofing</span>
-            </div>
-            <div className="flex items-center gap-2.5 text-xs text-on-surface-variant">
-              <PenLine className="w-4 h-4 text-primary shrink-0" />
-              <span>Rich markdown editor with syntax highlighting</span>
-            </div>
-            <div className="flex items-center gap-2.5 text-xs text-on-surface-variant">
-              <Sparkles className="w-4 h-4 text-primary shrink-0" />
-              <span>Instant publishing with custom slugs and tags</span>
-            </div>
-          </div>
         </div>
 
         {/* Footnote */}
         <div className="mt-6 text-center text-xs text-on-surface-variant">
-          First time here?{" "}
+          New to blogit?{" "}
           <Link
             href="/signup"
             className="text-primary hover:underline font-semibold ml-1 transition-all"
           >
-            Create an account in 1 click
+            Create an account
           </Link>
         </div>
       </div>
