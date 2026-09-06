@@ -7,7 +7,7 @@ import { AuroraShader } from "@/components/AuroraShader";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
-import { Eye, EyeOff, ArrowRight, Sparkles, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Sparkles, AlertCircle, Scale } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,6 +42,10 @@ export default function LoginPage() {
     }
   };
 
+  if (user) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden py-12 px-4 sm:px-6">
       <AuroraShader />
@@ -50,27 +54,26 @@ export default function LoginPage() {
       <div className="absolute -top-16 -left-12 w-64 h-64 bg-primary-fixed/40 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="absolute -bottom-16 -right-12 w-72 h-72 bg-tertiary-fixed/30 rounded-full blur-3xl pointer-events-none -z-10" />
 
+      {/* Top-left Brand Logo */}
+      <div className="absolute top-6 left-6 sm:top-8 sm:left-10 z-20">
+        <Logo size="lg" />
+      </div>
+
       <div className="w-full max-w-md relative z-10">
         {/* Brand Header */}
         <div className="flex flex-col items-center mb-8 text-center">
-          <div className="inline-flex items-center justify-center mb-4 p-3 rounded-2xl bg-white/80 backdrop-blur-md border border-primary/20 shadow-[0_8px_20px_rgba(194,101,42,0.12)] animate-float">
-            <Logo showText={false} className="h-10 w-10" />
-          </div>
-          <span className="text-xs uppercase tracking-[0.25em] font-medium text-secondary mb-1">
-            blogit
-          </span>
           <h1 className="text-3xl sm:text-4xl text-on-surface font-headline font-bold tracking-tight">
-            Welcome back to blogit
+            Welcome back
           </h1>
           <p className="font-body text-xs sm:text-sm text-on-surface-variant mt-2 max-w-xs leading-relaxed">
-            Don&apos;t just think, blog it. Pick up right where you left off.
+            Continue writing and reading stories on blogit.
           </p>
         </div>
 
         {/* Card */}
-        <div className="w-full bg-white/85 backdrop-blur-xl border border-primary/15 shadow-2xl shadow-primary/10 rounded-2xl p-8 md:p-10 relative">
+        <div className="w-full bg-white/85 backdrop-blur-xl border border-primary/15 shadow-2xl shadow-primary/10 rounded-lg p-8 md:p-10 relative">
           {error && (
-            <div className="mb-5 p-3.5 rounded-xl bg-error/10 border border-error/20 flex items-center gap-2.5 text-xs text-error">
+            <div className="mb-5 p-3.5 rounded-md bg-error/10 border border-error/20 flex items-center gap-2.5 text-xs text-error">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -80,7 +83,7 @@ export default function LoginPage() {
           <div className="space-y-3">
             <button
               type="button"
-              className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-surface-container-low/80 hover:bg-white border border-primary/10 hover:border-primary/30 text-on-surface text-xs sm:text-sm font-medium shadow-sm transition-all duration-200"
+              className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-md bg-surface-container-low/80 hover:bg-white border border-primary/10 hover:border-primary/30 text-on-surface text-xs sm:text-sm font-medium shadow-sm transition-all duration-200"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -121,7 +124,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder=" "
-                className="peer w-full px-4 pt-5 pb-2 text-sm bg-surface-container-low/60 text-on-surface rounded-xl border border-primary/15 focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                className="peer w-full px-4 pt-5 pb-2 text-sm bg-surface-container-low/60 text-on-surface rounded-md border border-primary/15 focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
               />
               <label
                 htmlFor="emailInput"
@@ -139,7 +142,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder=" "
-                className="peer w-full pl-4 pr-11 pt-5 pb-2 text-sm bg-surface-container-low/60 text-on-surface rounded-xl border border-primary/15 focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                className="peer w-full pl-4 pr-11 pt-5 pb-2 text-sm bg-surface-container-low/60 text-on-surface rounded-md border border-primary/15 focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
               />
               <label
                 htmlFor="passwordInput"
