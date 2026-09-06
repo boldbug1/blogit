@@ -14,13 +14,11 @@ import {
   BookOpen,
   TrendingUp,
   Clock,
-  ArrowUpRight,
   Plus,
-  Copy,
-  Check,
   BarChart3,
   Eye,
   ImageIcon,
+  Pencil,
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -41,9 +39,10 @@ export default function DashboardPage() {
       return;
     }
 
-    if (user) {
+    if (user?.id) {
+      setIsLoadingBlogs(true);
       api.blogs
-        .list()
+        .list({ author_id: user.id })
         .then((data) => {
           if (Array.isArray(data)) {
             setBlogs(data);
@@ -70,7 +69,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (isAuthLoading) {
+  if (isAuthLoading || !user) {
     return (
       <div className="min-h-screen flex flex-col bg-[#faf5ee]">
         <Navbar />
@@ -114,7 +113,7 @@ export default function DashboardPage() {
 
           {/* Real Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="p-6 rounded-2xl bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div className="p-6 rounded-lg bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-on-surface-variant mb-3">
                 <span className="text-xs uppercase tracking-wider font-semibold font-body text-secondary">
                   Published Posts
@@ -131,7 +130,7 @@ export default function DashboardPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div className="p-6 rounded-lg bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-on-surface-variant mb-3">
                 <span className="text-xs uppercase tracking-wider font-semibold font-body text-secondary">
                   Total Views
@@ -146,7 +145,7 @@ export default function DashboardPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div className="p-6 rounded-lg bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-on-surface-variant mb-3">
                 <span className="text-xs uppercase tracking-wider font-semibold font-body text-secondary">
                   Subscribers
@@ -163,7 +162,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Analytics Section */}
-          <div className="p-7 sm:p-8 rounded-2xl bg-white/80 border border-outline-variant/40 shadow-sm space-y-6">
+          <div className="p-6 sm:p-7 rounded-lg bg-white/80 border border-outline-variant/40 shadow-sm space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="font-headline text-2xl text-on-surface font-bold tracking-tight">
@@ -176,13 +175,13 @@ export default function DashboardPage() {
 
               <div className="flex flex-wrap items-center gap-3">
                 {/* Metric Selectors */}
-                <div className="inline-flex rounded-lg bg-surface-container p-1 text-xs">
+                <div className="inline-flex rounded-md bg-surface-container p-1 text-xs">
                   {(["views", "visitors", "subscribers"] as const).map((metric) => (
                     <button
                       key={metric}
                       type="button"
                       onClick={() => setActiveMetric(metric)}
-                      className={`capitalize px-3 py-1.5 rounded-md font-medium transition-all ${
+                      className={`capitalize px-3 py-1.5 rounded-sm font-medium transition-all ${
                         activeMetric === metric
                           ? "bg-white shadow-sm text-on-surface font-semibold"
                           : "text-on-surface-variant hover:text-on-surface"
@@ -194,13 +193,13 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Range Selectors */}
-                <div className="inline-flex rounded-lg bg-surface-container p-1 text-xs">
+                <div className="inline-flex rounded-md bg-surface-container p-1 text-xs">
                   {(["7D", "30D", "90D", "1Y"] as const).map((range) => (
                     <button
                       key={range}
                       type="button"
                       onClick={() => setActiveRange(range)}
-                      className={`px-2.5 py-1.5 rounded-md font-medium transition-colors ${
+                      className={`px-2.5 py-1.5 rounded-sm font-medium transition-colors ${
                         activeRange === range
                           ? "bg-primary text-white shadow-sm"
                           : "text-on-surface-variant hover:text-on-surface"
@@ -214,16 +213,13 @@ export default function DashboardPage() {
             </div>
 
             {/* Clean empty state for metrics until views exist */}
-            <div className="w-full h-48 rounded-xl bg-surface-container-low/40 border border-dashed border-outline-variant/60 flex flex-col items-center justify-center text-center p-6 space-y-2">
+            <div className="w-full h-48 rounded-lg bg-surface-container-low/40 border border-dashed border-outline-variant/60 flex flex-col items-center justify-center text-center p-6 space-y-2">
               <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-1">
                 <BarChart3 className="w-5 h-5" />
               </div>
               <h3 className="font-headline text-lg font-bold text-on-surface">
                 No analytics data yet
               </h3>
-              <p className="text-xs text-on-surface-variant max-w-sm leading-relaxed">
-                Reader metrics will automatically appear here once visitors start viewing your posts.
-              </p>
             </div>
           </div>
 
@@ -246,20 +242,20 @@ export default function DashboardPage() {
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="p-6 rounded-2xl bg-white/80 border border-outline-variant/30 flex items-center justify-between gap-6 animate-pulse"
+                    className="p-6 rounded-lg bg-white/80 border border-outline-variant/30 flex items-center justify-between gap-6 animate-pulse"
                   >
                     <div className="space-y-3 flex-1">
                       <div className="h-4 w-32 bg-[#e8e0d5]/70 rounded" />
-                      <div className="h-6 w-3/4 bg-[#e8e0d5]/70 rounded-lg" />
+                      <div className="h-6 w-3/4 bg-[#e8e0d5]/70 rounded-md" />
                       <div className="h-3.5 w-1/2 bg-[#e8e0d5]/70 rounded" />
                     </div>
-                    <div className="h-20 w-24 bg-[#e8e0d5]/70 rounded-xl hidden sm:block shrink-0" />
+                    <div className="h-20 w-24 bg-[#e8e0d5]/70 rounded-md hidden sm:block shrink-0" />
                   </div>
                 ))}
               </div>
             ) : blogs.length === 0 ? (
-              <div className="p-16 rounded-3xl bg-white/70 border border-dashed border-outline-variant/60 text-center space-y-4 max-w-2xl mx-auto">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
+              <div className="p-16 rounded-lg bg-white/70 border border-dashed border-outline-variant/60 text-center space-y-4 max-w-2xl mx-auto">
+                <div className="w-14 h-14 rounded-lg bg-primary/10 text-primary flex items-center justify-center mx-auto">
                   <PenSquare className="w-7 h-7" />
                 </div>
                 <h3 className="font-headline text-2xl font-bold text-on-surface">
@@ -291,19 +287,22 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={uniqueKey}
-                      className="p-6 rounded-2xl bg-white/80 hover:bg-white border border-outline-variant/30 hover:border-primary/40 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6 group"
+                      className="p-6 rounded-lg bg-white/80 hover:bg-white border border-outline-variant/30 hover:border-primary/40 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6 group"
                     >
                       <div className="flex flex-col sm:flex-row items-start gap-4 min-w-0 flex-1">
                         {coverImage && (
-                          <div className="w-full sm:w-40 h-28 rounded-xl overflow-hidden shrink-0 border border-outline-variant/30 bg-surface-container-low">
+                          <Link
+                            href={`/blogs/${blog.slug}`}
+                            className="w-full sm:w-40 h-28 rounded-md overflow-hidden shrink-0 border border-outline-variant/30 bg-surface-container-low block group/img shadow-2xs"
+                          >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={coverImage}
                               alt={blog.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300"
                               loading="lazy"
                             />
-                          </div>
+                          </Link>
                         )}
 
                         <div className="space-y-2 min-w-0 flex-1">
@@ -326,13 +325,17 @@ export default function DashboardPage() {
                           </div>
 
                           <h3 className="font-headline text-xl sm:text-2xl text-on-surface group-hover:text-primary transition-colors font-bold tracking-tight leading-snug">
-                            <Link href={`/blogs/${blog.slug}`}>{blog.title}</Link>
+                            <Link href={`/blogs/${blog.slug}`} className="hover:underline">
+                              {blog.title}
+                            </Link>
                           </h3>
 
                           {excerpt && (
-                            <p className="text-sm text-on-surface-variant font-body line-clamp-2 leading-relaxed">
-                              {excerpt}
-                            </p>
+                            <Link href={`/blogs/${blog.slug}`} className="block">
+                              <p className="text-sm text-on-surface-variant font-body line-clamp-2 leading-relaxed hover:text-on-surface transition-colors">
+                                {excerpt}
+                              </p>
+                            </Link>
                           )}
 
                           <div className="flex items-center gap-3 text-xs text-on-surface-variant pt-1 font-mono">
@@ -344,38 +347,13 @@ export default function DashboardPage() {
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0 self-end md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-outline-variant/20 w-full md:w-auto justify-end">
-                        <button
-                          type="button"
-                          onClick={() => handleCopyLink(blog.slug)}
-                          className="btn-secondary-warm px-3 py-2 text-xs"
-                          title="Copy public link"
-                        >
-                          {copiedSlug === blog.slug ? (
-                            <>
-                              <Check className="w-3.5 h-3.5 text-emerald-600" />
-                              <span className="text-emerald-700">Copied</span>
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-3.5 h-3.5" />
-                              <span>Copy Link</span>
-                            </>
-                          )}
-                        </button>
-
                         <Link
                           href={`/editor/${blog.id}`}
-                          className="btn-secondary-warm px-4 py-2 text-xs font-semibold"
+                          className="p-2.5 rounded-lg border border-outline-variant/40 bg-white hover:bg-primary/10 hover:border-primary/40 text-on-surface-variant hover:text-primary transition-all shadow-2xs flex items-center justify-center shrink-0 group/edit"
+                          title="Edit story"
+                          aria-label={`Edit ${blog.title}`}
                         >
-                          Edit
-                        </Link>
-
-                        <Link
-                          href={`/blogs/${blog.slug}`}
-                          className="btn-primary-warm px-4 py-2 text-xs font-semibold"
-                        >
-                          <span>View</span>
-                          <ArrowUpRight className="w-3.5 h-3.5" />
+                          <Pencil className="w-4 h-4 text-on-surface-variant group-hover/edit:text-primary transition-colors" />
                         </Link>
                       </div>
                     </div>

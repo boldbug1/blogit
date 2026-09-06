@@ -9,13 +9,8 @@ export function Footer() {
         <div className="md:col-span-6 space-y-4">
           <Logo />
           <p className="text-sm text-on-surface-variant max-w-sm leading-relaxed">
-            Where thoughtful writing finds its quiet home. Built on the
-            philosophy: <em className="text-on-surface font-medium">don&apos;t just think, blog it</em>. A sunlit sanctuary crafted for essays, craft journalism, and direct subscriber resonance.
+           <em className="text-on-surface font-medium">don&apos;t just think, blog it</em>.
           </p>
-          <div className="flex items-center gap-2 pt-2 text-xs font-mono text-secondary">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
-            <span>API Engine: Go 1.26 stdlib • Postgres pgx</span>
-          </div>
         </div>
 
         <div className="md:col-span-3 space-y-3">
@@ -24,11 +19,6 @@ export function Footer() {
             <li>
               <Link href="/" className="hover:text-primary transition-colors">
                 Home
-              </Link>
-            </li>
-            <li>
-              <Link href="/#featured-stories" className="hover:text-primary transition-colors">
-                Featured Stories
               </Link>
             </li>
             <li>
@@ -68,13 +58,7 @@ export function Footer() {
 
       <div className="max-w-7xl mx-auto px-6 lg:px-12 mt-12 pt-6 border-t border-[#d8d0c8]/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-secondary">
         <p>© {new Date().getFullYear()} blogit. Sun-Baked Simplicity.</p>
-        <div className="flex items-center gap-4">
-          <span>Zero tracking scripts</span>
-          <span>•</span>
-          <span>Type-safe SQL</span>
-          <span>•</span>
-          <span>MIT License</span>
-        </div>
+       
       </div>
     </footer>
   );

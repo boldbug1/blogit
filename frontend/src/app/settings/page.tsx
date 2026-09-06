@@ -40,6 +40,18 @@ export default function SettingsPage() {
     setTimeout(() => setIsSaved(false), 3000);
   };
 
+  if (isAuthLoading || !user) {
+    return (
+      <div className="min-h-screen flex flex-col bg-surface">
+        <Navbar />
+        <main className="w-full pt-28 pb-20 flex-1 flex items-center justify-center">
+          <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-surface">
       <Navbar />
@@ -63,7 +75,7 @@ export default function SettingsPage() {
           </div>
 
           {isSaved && (
-            <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-xs sm:text-sm text-emerald-800">
+            <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-xs sm:text-sm text-emerald-800">
               <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
               <span>Settings saved successfully.</span>
             </div>
@@ -71,7 +83,7 @@ export default function SettingsPage() {
 
           <form onSubmit={handleSave} className="space-y-8">
             {/* Site & Domain Card */}
-            <div className="p-6 sm:p-8 rounded-2xl bg-white/80 shadow-sm border border-outline-variant/30 space-y-6">
+            <div className="p-6 sm:p-8 rounded-lg bg-white/80 shadow-sm border border-outline-variant/30 space-y-6">
               <div className="flex items-center gap-2.5 pb-3 border-b border-outline-variant/20">
                 <Globe className="w-5 h-5 text-primary" />
                 <h3 className="font-headline text-xl font-bold text-on-surface">
@@ -88,7 +100,7 @@ export default function SettingsPage() {
                     type="text"
                     value={pubName}
                     onChange={(e) => setPubName(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-surface-container-lowest text-on-surface rounded-xl border border-outline-variant/40 focus:outline-none focus:border-primary text-sm transition-colors"
+                    className="w-full px-4 py-2.5 bg-surface-container-lowest text-on-surface rounded-md border border-outline-variant/40 focus:outline-none focus:border-primary text-sm transition-colors"
                   />
                 </div>
 
@@ -97,14 +109,14 @@ export default function SettingsPage() {
                     Subdomain
                   </label>
                   <div className="flex items-center">
-                    <span className="px-3.5 py-2.5 bg-surface-container text-on-surface-variant rounded-l-xl border border-r-0 border-outline-variant/40 text-xs font-mono">
+                    <span className="px-3.5 py-2.5 bg-surface-container text-on-surface-variant rounded-l-md border border-r-0 border-outline-variant/40 text-xs font-mono">
                       blogit.pub/@
                     </span>
                     <input
                       type="text"
                       value={subdomain}
                       onChange={(e) => setSubdomain(e.target.value)}
-                      className="flex-1 px-4 py-2.5 bg-surface-container-lowest text-on-surface rounded-r-xl border border-outline-variant/40 focus:outline-none focus:border-primary text-sm font-mono transition-colors"
+                      className="flex-1 px-4 py-2.5 bg-surface-container-lowest text-on-surface rounded-r-md border border-outline-variant/40 focus:outline-none focus:border-primary text-sm font-mono transition-colors"
                     />
                   </div>
                 </div>
@@ -118,7 +130,7 @@ export default function SettingsPage() {
                     value={customDomain}
                     onChange={(e) => setCustomDomain(e.target.value)}
                     placeholder="yourdomain.com"
-                    className="w-full px-4 py-2.5 bg-surface-container-lowest text-on-surface rounded-xl border border-outline-variant/40 focus:outline-none focus:border-primary text-sm font-mono transition-colors"
+                    className="w-full px-4 py-2.5 bg-surface-container-lowest text-on-surface rounded-md border border-outline-variant/40 focus:outline-none focus:border-primary text-sm font-mono transition-colors"
                   />
                   <p className="text-[11px] text-on-surface-variant mt-1">
                     Connect your custom domain with automatic SSL.
@@ -128,7 +140,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Profile Card */}
-            <div className="p-6 sm:p-8 rounded-2xl bg-white/80 shadow-sm border border-outline-variant/30 space-y-6">
+            <div className="p-6 sm:p-8 rounded-lg bg-white/80 shadow-sm border border-outline-variant/30 space-y-6">
               <div className="flex items-center gap-2.5 pb-3 border-b border-outline-variant/20">
                 <User className="w-5 h-5 text-primary" />
                 <h3 className="font-headline text-xl font-bold text-on-surface">
@@ -145,7 +157,7 @@ export default function SettingsPage() {
                     <input
                       type="text"
                       defaultValue={user?.name || ""}
-                      className="w-full px-4 py-2.5 bg-surface-container-lowest text-on-surface rounded-xl border border-outline-variant/40 focus:outline-none focus:border-primary text-sm transition-colors"
+                      className="w-full px-4 py-2.5 bg-surface-container-lowest text-on-surface rounded-md border border-outline-variant/40 focus:outline-none focus:border-primary text-sm transition-colors"
                     />
                   </div>
                   <div>
@@ -156,7 +168,7 @@ export default function SettingsPage() {
                       type="email"
                       disabled
                       defaultValue={user?.email || ""}
-                      className="w-full px-4 py-2.5 bg-surface-container text-on-surface-variant rounded-xl border border-outline-variant/40 text-sm opacity-80"
+                      className="w-full px-4 py-2.5 bg-surface-container text-on-surface-variant rounded-md border border-outline-variant/40 text-sm opacity-80"
                     />
                   </div>
                 </div>
@@ -170,14 +182,14 @@ export default function SettingsPage() {
                     value={bio}
                     placeholder="Tell readers a bit about yourself..."
                     onChange={(e) => setBio(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-surface-container-lowest text-on-surface rounded-xl border border-outline-variant/40 focus:outline-none focus:border-primary text-sm transition-colors resize-none"
+                    className="w-full px-4 py-2.5 bg-surface-container-lowest text-on-surface rounded-md border border-outline-variant/40 focus:outline-none focus:border-primary text-sm transition-colors resize-none"
                   />
                 </div>
               </div>
             </div>
 
             {/* Theme Card */}
-            <div className="p-6 sm:p-8 rounded-2xl bg-white/80 shadow-sm border border-outline-variant/30 space-y-6">
+            <div className="p-6 sm:p-8 rounded-lg bg-white/80 shadow-sm border border-outline-variant/30 space-y-6">
               <div className="flex items-center gap-2.5 pb-3 border-b border-outline-variant/20">
                 <Palette className="w-5 h-5 text-primary" />
                 <h3 className="font-headline text-xl font-bold text-on-surface">
@@ -186,7 +198,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl border-2 border-primary bg-primary/5 flex items-center justify-between">
+                <div className="p-4 rounded-md border-2 border-primary bg-primary/5 flex items-center justify-between">
                   <div>
                     <h4 className="font-semibold text-xs sm:text-sm text-on-surface">
                       Sahara (Warm)
@@ -200,7 +212,7 @@ export default function SettingsPage() {
                   </span>
                 </div>
 
-                <div className="p-4 rounded-xl border border-outline-variant/40 bg-surface-container-lowest opacity-60 flex items-center justify-between">
+                <div className="p-4 rounded-md border border-outline-variant/40 bg-surface-container-lowest opacity-60 flex items-center justify-between">
                   <div>
                     <h4 className="font-semibold text-xs sm:text-sm text-on-surface">
                       Nordic Clean (Coming Soon)

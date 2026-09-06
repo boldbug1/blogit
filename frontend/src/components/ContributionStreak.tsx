@@ -202,14 +202,14 @@ export function ContributionStreak({ blogs }: ContributionStreakProps) {
   };
 
   return (
-    <div className="p-6 sm:p-8 rounded-2xl bg-white/85 border border-outline-variant/40 shadow-sm space-y-6">
+    <div className="p-6 sm:p-7 rounded-lg bg-white/85 border border-outline-variant/40 shadow-sm space-y-6">
       {/* Header & Streak Telemetry */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-outline-variant/25">
         <div>
           <h2 className="font-headline text-2xl text-on-surface font-bold tracking-tight flex items-center gap-2">
             <span>Writing Activity &amp; Streaks</span>
             {currentStreak > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-fixed text-on-primary-fixed animate-pulse">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-primary-fixed text-on-primary-fixed animate-pulse">
                 <Flame className="w-3.5 h-3.5 text-primary" /> Active Streak
               </span>
             )}
@@ -221,7 +221,7 @@ export function ContributionStreak({ blogs }: ContributionStreakProps) {
 
         {/* 3 Metric Badges */}
         <div className="flex items-center gap-3 text-xs font-medium">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container-low border border-outline-variant/30">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-surface-container-low border border-outline-variant/30">
             <Flame className="w-4 h-4 text-primary shrink-0" />
             <div>
               <div className="text-[10px] uppercase tracking-wider text-on-surface-variant font-mono">
@@ -233,7 +233,7 @@ export function ContributionStreak({ blogs }: ContributionStreakProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface-container-low border border-outline-variant/30">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-surface-container-low border border-outline-variant/30">
             <Trophy className="w-4 h-4 text-secondary shrink-0" />
             <div>
               <div className="text-[10px] uppercase tracking-wider text-on-surface-variant font-mono">

@@ -16,7 +16,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "blogit — Where thoughtful writing finds its quiet home",
+  title: "blogit",
   description:
     "Don't just think, blog it. A minimalist blog publishing platform built with Sun-Baked Simplicity.",
 };
