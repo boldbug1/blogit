@@ -6,12 +6,14 @@ import { useRouter } from "next/navigation";
 import { AuroraShader } from "@/components/AuroraShader";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import { api } from "@/lib/api";
-import { Eye, EyeOff, ArrowRight, Sparkles, AlertCircle, Scale } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, AlertCircle, Sun, Moon } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login, user, isLoading: isAuthLoading } = useAuth();
+  const { mode, toggleMode } = useTheme();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,16 +49,27 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden py-12 px-4 sm:px-6">
-      <AuroraShader />
-
-      {/* Decorative Blur Orbs */}
-      <div className="absolute -top-16 -left-12 w-64 h-64 bg-primary-fixed/40 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute -bottom-16 -right-12 w-72 h-72 bg-tertiary-fixed/30 rounded-full blur-3xl pointer-events-none -z-10" />
-
+    <div className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden py-12 px-4 sm:px-6 bg-background text-on-surface transition-colors duration-200">
       {/* Top-left Brand Logo */}
       <div className="absolute top-6 left-6 sm:top-8 sm:left-10 z-20">
         <Logo size="lg" />
+      </div>
+
+      {/* Top-right Dark Mode Toggle */}
+      <div className="absolute top-6 right-6 sm:top-8 sm:right-10 z-20">
+        <button
+          type="button"
+          onClick={toggleMode}
+          className="p-2.5 rounded-lg text-on-surface-variant hover:text-on-surface bg-surface border border-outline-variant/40 shadow-xs hover:bg-surface-container-low transition-colors"
+          aria-label="Toggle dark mode"
+          title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          {mode === "dark" ? (
+            <Sun className="w-4 h-4 text-amber-400" />
+          ) : (
+            <Moon className="w-4 h-4 text-secondary" />
+          )}
+        </button>
       </div>
 
       <div className="w-full max-w-md relative z-10">
@@ -71,7 +84,7 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="w-full bg-white/85 backdrop-blur-xl border border-primary/15 shadow-2xl shadow-primary/10 rounded-lg p-8 md:p-10 relative">
+        <div className="w-full bg-surface border border-outline-variant/50 shadow-xl rounded-lg p-8 md:p-10 relative transition-colors duration-200">
           {error && (
             <div className="mb-5 p-3.5 rounded-md bg-error/10 border border-error/20 flex items-center gap-2.5 text-xs text-error">
               <AlertCircle className="w-4 h-4 shrink-0" />
@@ -83,7 +96,7 @@ export default function LoginPage() {
           <div className="space-y-3">
             <button
               type="button"
-              className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-md bg-surface-container-low/80 hover:bg-white border border-primary/10 hover:border-primary/30 text-on-surface text-xs sm:text-sm font-medium shadow-sm transition-all duration-200"
+              className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-md bg-surface-container-low hover:bg-surface-container border border-outline-variant/40 text-on-surface text-xs sm:text-sm font-medium shadow-xs transition-all duration-200"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path
@@ -109,7 +122,7 @@ export default function LoginPage() {
 
           <div className="relative my-6 flex items-center justify-center">
             <div className="w-full h-px bg-outline-variant/40" />
-            <span className="absolute px-3 bg-white text-[11px] uppercase tracking-widest text-secondary font-medium">
+            <span className="absolute px-3 bg-surface text-[11px] uppercase tracking-widest text-secondary font-medium">
               or
             </span>
           </div>
@@ -124,7 +137,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder=" "
-                className="peer w-full px-4 pt-5 pb-2 text-sm bg-surface-container-low/60 text-on-surface rounded-md border border-primary/15 focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                className="peer w-full px-4 pt-5 pb-2 text-sm bg-surface-container-low text-on-surface rounded-md border border-outline-variant/40 focus:outline-none focus:bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
               />
               <label
                 htmlFor="emailInput"
@@ -142,7 +155,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder=" "
-                className="peer w-full pl-4 pr-11 pt-5 pb-2 text-sm bg-surface-container-low/60 text-on-surface rounded-md border border-primary/15 focus:outline-none focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                className="peer w-full pl-4 pr-11 pt-5 pb-2 text-sm bg-surface-container-low text-on-surface rounded-md border border-outline-variant/40 focus:outline-none focus:bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
               />
               <label
                 htmlFor="passwordInput"

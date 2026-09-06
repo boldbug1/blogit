@@ -24,6 +24,8 @@ import {
   Check,
   AlertCircle,
   X,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -33,6 +35,9 @@ export default function SettingsPage() {
     themes,
     activeTheme,
     activeThemeId,
+    mode,
+    setMode,
+    toggleMode,
     setTheme,
     saveCustomTheme,
     deleteCustomTheme,
@@ -58,12 +63,12 @@ export default function SettingsPage() {
   // Custom Theme Builder state
   const [isCreatingTheme, setIsCreatingTheme] = useState(false);
   const [newThemeName, setNewThemeName] = useState("");
-  const [newThemeMode, setNewThemeMode] = useState<"light" | "dark">("light");
-  const [newPrimary, setNewPrimary] = useState("#c2652a");
-  const [newBackground, setNewBackground] = useState("#faf5ee");
-  const [newSurfaceContainer, setNewSurfaceContainer] = useState("#f2ece4");
-  const [newOnSurface, setNewOnSurface] = useState("#3a302a");
-  const [newSecondary, setNewSecondary] = useState("#78706a");
+  const [newThemeMode, setNewThemeMode] = useState<"light" | "dark">(mode || "light");
+  const [newPrimary, setNewPrimary] = useState("#4f46e5");
+  const [newBackground, setNewBackground] = useState(mode === "dark" ? "#090d16" : "#ffffff");
+  const [newSurfaceContainer, setNewSurfaceContainer] = useState(mode === "dark" ? "#1e293b" : "#f1f5f9");
+  const [newOnSurface, setNewOnSurface] = useState(mode === "dark" ? "#f8fafc" : "#0f172a");
+  const [newSecondary, setNewSecondary] = useState(mode === "dark" ? "#94a3b8" : "#64748b");
 
   // Raw JSON Editor state
   const [isRawJsonOpen, setIsRawJsonOpen] = useState(false);
@@ -146,7 +151,7 @@ export default function SettingsPage() {
 
   if (isAuthLoading || !user) {
     return (
-      <div className="min-h-screen flex flex-col bg-surface">
+      <div className="min-h-screen flex flex-col bg-background text-on-surface">
         <Navbar />
         <main className="w-full pt-28 pb-20 flex-1 flex items-center justify-center">
           <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
@@ -157,7 +162,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface">
+    <div className="min-h-screen flex flex-col bg-background text-on-surface transition-colors duration-200">
       <Navbar />
 
       <main className="w-full pt-28 pb-20 flex-1">
@@ -187,7 +192,7 @@ export default function SettingsPage() {
 
           <form onSubmit={handleSave} className="space-y-8">
             {/* Site & Domain Card */}
-            <div className="p-6 sm:p-8 rounded-lg bg-white/80 shadow-sm border border-outline-variant/30 space-y-6">
+            <div className="p-6 sm:p-8 rounded-lg bg-surface shadow-sm border border-outline-variant/30 space-y-6">
               <div className="flex items-center gap-2.5 pb-3 border-b border-outline-variant/20">
                 <Globe className="w-5 h-5 text-primary" />
                 <h3 className="font-headline text-xl font-bold text-on-surface">
@@ -244,7 +249,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Profile Card */}
-            <div className="p-6 sm:p-8 rounded-lg bg-white/80 shadow-sm border border-outline-variant/30 space-y-6">
+            <div className="p-6 sm:p-8 rounded-lg bg-surface shadow-sm border border-outline-variant/30 space-y-6">
               <div className="flex items-center gap-2.5 pb-3 border-b border-outline-variant/20">
                 <User className="w-5 h-5 text-primary" />
                 <h3 className="font-headline text-xl font-bold text-on-surface">
@@ -293,7 +298,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Theme & Styling Section */}
-            <div className="p-6 sm:p-8 rounded-lg bg-white/80 shadow-sm border border-outline-variant/30 space-y-6">
+            <div className="p-6 sm:p-8 rounded-lg bg-surface shadow-sm border border-outline-variant/30 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-outline-variant/20">
                 <div className="flex items-center gap-2.5">
                   <Palette className="w-5 h-5 text-primary" />
@@ -350,6 +355,70 @@ export default function SettingsPage() {
                 </div>
               </div>
 
+              {/* Theme Mode Selector (Light vs Dark) */}
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-on-surface">
+                  Theme Mode
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setMode("light")}
+                    className={`flex items-center gap-3 p-3.5 rounded-lg border-2 text-left transition-all ${
+                      mode === "light"
+                        ? "border-primary bg-primary/10 text-primary shadow-xs"
+                        : "border-outline-variant/40 hover:border-outline-variant/70 bg-surface-container-lowest text-on-surface"
+                    }`}
+                  >
+                    <div
+                      className={`p-2 rounded-md ${
+                        mode === "light"
+                          ? "bg-primary text-white"
+                          : "bg-surface-container text-on-surface-variant"
+                      }`}
+                    >
+                      <Sun className="w-4 h-4 text-amber-400" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-xs sm:text-sm">
+                        Light Mode
+                      </div>
+                      <div className="text-[11px] text-on-surface-variant">
+                        Pure crisp white background (#ffffff)
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setMode("dark")}
+                    className={`flex items-center gap-3 p-3.5 rounded-lg border-2 text-left transition-all ${
+                      mode === "dark"
+                        ? "border-primary bg-primary/10 text-primary shadow-xs"
+                        : "border-outline-variant/40 hover:border-outline-variant/70 bg-surface-container-lowest text-on-surface"
+                    }`}
+                  >
+                    <div
+                      className={`p-2 rounded-md ${
+                        mode === "dark"
+                          ? "bg-primary text-white"
+                          : "bg-surface-container text-on-surface-variant"
+                      }`}
+                    >
+                      <Moon className="w-4 h-4 text-secondary" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-xs sm:text-sm">
+                        Dark Mode
+                      </div>
+                      <div className="text-[11px] text-on-surface-variant">
+                        Deep slate background (#090d16)
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
               {/* Custom Theme Builder Drawer/Accordion */}
               {isCreatingTheme && (
                 <div className="p-5 rounded-lg border border-primary/25 bg-primary/5 space-y-5">
@@ -386,9 +455,21 @@ export default function SettingsPage() {
                       </label>
                       <select
                         value={newThemeMode}
-                        onChange={(e) =>
-                          setNewThemeMode(e.target.value as "light" | "dark")
-                        }
+                        onChange={(e) => {
+                          const m = e.target.value as "light" | "dark";
+                          setNewThemeMode(m);
+                          if (m === "dark") {
+                            setNewBackground("#090d16");
+                            setNewSurfaceContainer("#1e293b");
+                            setNewOnSurface("#f8fafc");
+                            setNewSecondary("#94a3b8");
+                          } else {
+                            setNewBackground("#ffffff");
+                            setNewSurfaceContainer("#f1f5f9");
+                            setNewOnSurface("#0f172a");
+                            setNewSecondary("#64748b");
+                          }
+                        }}
                         className="w-full px-3 py-2 text-xs bg-surface-container-lowest text-on-surface rounded-md border border-outline-variant/40 focus:outline-none focus:border-primary"
                       >
                         <option value="light">Light Mode</option>
