@@ -19,6 +19,7 @@ import {
   Mail,
   CheckCircle2,
 } from "lucide-react";
+import { api } from "@/lib/api";
 
 /**
  * FEATURE TOGGLE: Typewriter Intro Splash
@@ -35,7 +36,7 @@ export function LandingPage() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [newsletterError, setNewsletterError] = useState("");
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !email.includes("@") || !email.includes(".")) {
       setNewsletterError("Please enter a valid email address.");
@@ -44,12 +45,15 @@ export function LandingPage() {
     setNewsletterError("");
     setIsSubmitting(true);
 
-    // Simulate subscription process
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await api.newsletter.subscribe(email.trim());
       setIsSubscribed(true);
       setEmail("");
-    }, 600);
+    } catch (err: any) {
+      setNewsletterError(err.message || "Failed to subscribe. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

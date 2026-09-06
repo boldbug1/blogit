@@ -4,6 +4,7 @@ export interface Author {
   id: string;
   name: string;
   email: string;
+  avatar_url?: string;
   created_at: string;
 }
 
@@ -172,6 +173,11 @@ async function request<T>(
 
 export const api = {
   auth: {
+    googleAuth: (credential: string) =>
+      request<AuthResponse>("/auth/google", {
+        method: "POST",
+        body: JSON.stringify({ credential }),
+      }),
     register: (payload: { name: string; email: string; password: string }) =>
       request<Author>("/auth/register", {
         method: "POST",
@@ -233,6 +239,11 @@ export const api = {
       });
       return normalizeBlogDetail(raw);
     },
+    delete: async (id: string): Promise<{ message: string }> => {
+      return request<{ message: string }>(`/blogs/${id}`, {
+        method: "DELETE",
+      });
+    },
     getLikes: async (id: string): Promise<{ liked: boolean; count: number }> => {
       return request<{ liked: boolean; count: number }>(`/blogs/${id}/likes`);
     },
@@ -275,6 +286,15 @@ export const api = {
         author_name: String(c.AuthorName || c.author_name || "Reader"),
         author_email: String(c.AuthorEmail || c.author_email || ""),
       };
+    },
+  },
+
+  newsletter: {
+    subscribe: async (email: string): Promise<{ message: string }> => {
+      return request<{ message: string }>("/newsletter/subscribe", {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      });
     },
   },
 

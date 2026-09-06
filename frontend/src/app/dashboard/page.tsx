@@ -19,6 +19,9 @@ import {
   Eye,
   ImageIcon,
   Pencil,
+  Trash2,
+  AlertTriangle,
+  Loader2,
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -28,6 +31,25 @@ export default function DashboardPage() {
   const [blogs, setBlogs] = useState<BlogSummary[]>([]);
   const [isLoadingBlogs, setIsLoadingBlogs] = useState(true);
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+
+  const [blogToDelete, setBlogToDelete] = useState<BlogSummary | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const confirmDelete = async () => {
+    if (!blogToDelete) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      await api.blogs.delete(blogToDelete.id);
+      setBlogs((prev) => prev.filter((b) => b.id !== blogToDelete.id));
+      setBlogToDelete(null);
+    } catch (err: any) {
+      setDeleteError(err.message || "Failed to delete post");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   // Stitch Analytics Controls
   const [activeMetric, setActiveMetric] = useState<"views" | "visitors" | "subscribers">("views");
@@ -355,6 +377,18 @@ export default function DashboardPage() {
                         >
                           <Pencil className="w-4 h-4 text-on-surface-variant group-hover/edit:text-primary transition-colors" />
                         </Link>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDeleteError(null);
+                            setBlogToDelete(blog);
+                          }}
+                          className="p-2.5 rounded-lg border border-outline-variant/40 bg-surface hover:bg-error/10 hover:border-error/40 text-on-surface-variant hover:text-error transition-all shadow-2xs flex items-center justify-center shrink-0 group/trash cursor-pointer"
+                          title="Delete story"
+                          aria-label={`Delete ${blog.title}`}
+                        >
+                          <Trash2 className="w-4 h-4 text-on-surface-variant group-hover/trash:text-error transition-colors" />
+                        </button>
                       </div>
                     </div>
                   );
@@ -363,6 +397,59 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {blogToDelete && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+            <div className="w-full max-w-md bg-surface border border-outline-variant/40 rounded-xl shadow-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-error/10 text-error flex items-center justify-center shrink-0">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-headline font-bold text-on-surface">
+                    Delete story?
+                  </h3>
+                  <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                    Are you sure you want to permanently delete{" "}
+                    <span className="font-semibold text-on-surface">
+                      &quot;{blogToDelete.title}&quot;
+                    </span>
+                    ? This action cannot be undone.
+                  </p>
+                </div>
+              </div>
+
+              {deleteError && (
+                <div className="p-3 rounded-md bg-error/10 border border-error/20 text-xs text-error">
+                  {deleteError}
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  disabled={isDeleting}
+                  onClick={() => {
+                    if (!isDeleting) setBlogToDelete(null);
+                  }}
+                  className="px-4 py-2 text-xs sm:text-sm font-medium rounded-md border border-outline-variant/40 bg-surface hover:bg-surface-container text-on-surface transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={isDeleting}
+                  onClick={confirmDelete}
+                  className="px-4 py-2 text-xs sm:text-sm font-medium rounded-md bg-error text-white hover:bg-error/90 transition-colors flex items-center gap-2 cursor-pointer disabled:opacity-60"
+                >
+                  {isDeleting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  <span>{isDeleting ? "Deleting..." : "Delete Story"}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />
