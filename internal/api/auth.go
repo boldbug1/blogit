@@ -258,14 +258,14 @@ func (s *Server) handleMe(w http.ResponseWriter, r *http.Request) {
   }
   author, err := s.queries.GetAuthorById(r.Context(), id)
   // handle pgx.ErrNoRows -> 404, else 200 newAuthorResponse(author)
-  if err!=nil{
-	if errors.Is(err,pgx.ErrNoRows){
-		writeError(w,http.StatusNotFound,"author does not exist")
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			writeError(w, http.StatusNotFound, "author does not exist")
+			return
+		}
+		writeError(w, http.StatusInternalServerError, "failed to fetch author profile")
 		return
 	}
-	writeError(w,http.StatusInternalServerError,err.Error())
-	return
-  }
 
   writeJSON(w,http.StatusOK,newAuthorResponse(author))
 }

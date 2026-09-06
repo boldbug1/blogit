@@ -6,7 +6,7 @@ RETURNING *;
 -- name: GetBlogBySlug :one
 SELECT 
     b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at, b.updated_at,
-    a.id AS author_id, a.name AS author_name, a.email AS author_email,
+    a.id AS author_id, a.name AS author_name, a.avatar_url AS author_avatar_url,
     (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
     (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
@@ -18,6 +18,7 @@ SELECT
     b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at,
     b.author_id,
     a.name AS author_name,
+    a.avatar_url AS author_avatar_url,
     (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
     (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
@@ -30,6 +31,7 @@ SELECT
     b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at,
     b.author_id,
     a.name AS author_name,
+    a.avatar_url AS author_avatar_url,
     (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
     (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
@@ -43,6 +45,7 @@ SELECT
     b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at,
     b.author_id,
     a.name AS author_name,
+    a.avatar_url AS author_avatar_url,
     (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
     (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
@@ -54,7 +57,7 @@ LIMIT $2 OFFSET $3;
 -- name: GetBlogById :one
 SELECT 
     b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at, b.updated_at,
-    b.author_id, a.name AS author_name, a.email AS author_email,
+    b.author_id, a.name AS author_name, a.avatar_url AS author_avatar_url,
     (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
     (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
@@ -80,4 +83,3 @@ RETURNING *;
 -- name: DeleteBlogById :exec
 DELETE FROM blogs
 WHERE id = $1;
-

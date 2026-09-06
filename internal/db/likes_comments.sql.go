@@ -123,7 +123,7 @@ func (q *Queries) InsertLike(ctx context.Context, arg InsertLikeParams) error {
 const listCommentsByBlogId = `-- name: ListCommentsByBlogId :many
 SELECT 
     c.id, c.blog_id, c.author_id, c.parent_id, c.content, c.created_at, c.updated_at,
-    a.name AS author_name, a.email AS author_email
+    a.name AS author_name, a.avatar_url AS author_avatar_url
 FROM blog_comments c
 JOIN authors a ON a.id = c.author_id
 WHERE c.blog_id = $1
@@ -131,15 +131,15 @@ ORDER BY c.created_at ASC
 `
 
 type ListCommentsByBlogIdRow struct {
-	ID          pgtype.UUID
-	BlogID      pgtype.UUID
-	AuthorID    pgtype.UUID
-	ParentID    pgtype.UUID
-	Content     string
-	CreatedAt   pgtype.Timestamptz
-	UpdatedAt   pgtype.Timestamptz
-	AuthorName  string
-	AuthorEmail string
+	ID              pgtype.UUID
+	BlogID          pgtype.UUID
+	AuthorID        pgtype.UUID
+	ParentID        pgtype.UUID
+	Content         string
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+	AuthorName      string
+	AuthorAvatarUrl string
 }
 
 func (q *Queries) ListCommentsByBlogId(ctx context.Context, blogID pgtype.UUID) ([]ListCommentsByBlogIdRow, error) {
@@ -160,7 +160,7 @@ func (q *Queries) ListCommentsByBlogId(ctx context.Context, blogID pgtype.UUID) 
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.AuthorName,
-			&i.AuthorEmail,
+			&i.AuthorAvatarUrl,
 		); err != nil {
 			return nil, err
 		}

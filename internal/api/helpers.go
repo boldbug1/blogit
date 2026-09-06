@@ -25,8 +25,8 @@ func writeError(w http.ResponseWriter, status int, message string) {
 }
 
 func readJSON(w http.ResponseWriter, r *http.Request, dst any) error {
-	// Allow up to 25MB for rich content and inline images
-	r.Body = http.MaxBytesReader(w, r.Body, 26214400)
+	// Allow up to 5MB for markdown content; binary uploads use multipart /media/upload
+	r.Body = http.MaxBytesReader(w, r.Body, 5242880)
 
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields() // Catch typos in client request payloads

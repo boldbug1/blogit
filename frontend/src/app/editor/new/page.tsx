@@ -84,7 +84,6 @@ export default function NewPostPage() {
         : body.trim();
 
       const newBlog = await api.blogs.create({
-        author_id: user?.id,
         title: title.trim(),
         body: fullBody,
         banner_image: bannerImage,

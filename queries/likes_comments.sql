@@ -24,7 +24,7 @@ RETURNING *;
 -- name: ListCommentsByBlogId :many
 SELECT 
     c.id, c.blog_id, c.author_id, c.parent_id, c.content, c.created_at, c.updated_at,
-    a.name AS author_name, a.email AS author_email
+    a.name AS author_name, a.avatar_url AS author_avatar_url
 FROM blog_comments c
 JOIN authors a ON a.id = c.author_id
 WHERE c.blog_id = $1
@@ -33,4 +33,3 @@ ORDER BY c.created_at ASC;
 -- name: DeleteComment :exec
 DELETE FROM blog_comments
 WHERE id = $1 AND author_id = $2;
-

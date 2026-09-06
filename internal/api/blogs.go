@@ -23,7 +23,6 @@ func slugify(s string) string {
 }
 
 type CreateBlogRequest struct {
-	AuthorID    string   `json:"author_id"`
 	Title       string   `json:"title"`
 	Body        string   `json:"body"`
 	BannerImage string   `json:"banner_image"`
@@ -157,16 +156,14 @@ func (s *Server) handleCreateBlog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var authorUUID pgtype.UUID
-	if strings.TrimSpace(req.AuthorID) != "" {
-		if err := authorUUID.Scan(req.AuthorID); err != nil {
-			writeError(w, http.StatusBadRequest, "invalid author_id format")
-			return
-		}
-	} else if id, ok := CurrentUserID(r); ok {
-		authorUUID = id
-	} else {
-		writeError(w, http.StatusBadRequest, "author_id is required")
+	authorUUID, ok := CurrentUserID(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, "unauthorized")
+		return
+	}
+
+	if len(req.Title) > 300 {
+		writeError(w, http.StatusUnprocessableEntity, "title cannot exceed 300 characters")
 		return
 	}
 
@@ -180,7 +177,13 @@ func (s *Server) handleCreateBlog(w http.ResponseWriter, r *http.Request) {
 	for _, t := range req.Tags {
 		t = strings.TrimSpace(t)
 		if t != "" {
+			if len(t) > 50 {
+				t = t[:50]
+			}
 			cleanTags = append(cleanTags, t)
+			if len(cleanTags) >= 10 {
+				break
+			}
 		}
 	}
 
@@ -239,6 +242,11 @@ func (s *Server) handleUpdateBlog(w http.ResponseWriter, r *http.Request) {
 	req.Title = strings.TrimSpace(req.Title)
 	req.Body = strings.TrimSpace(req.Body)
 
+	if len(req.Title) > 300 {
+		writeError(w, http.StatusUnprocessableEntity, "title cannot exceed 300 characters")
+		return
+	}
+
 	var bannerText pgtype.Text
 	if req.BannerImage != nil {
 		bannerText = pgtype.Text{
@@ -251,7 +259,13 @@ func (s *Server) handleUpdateBlog(w http.ResponseWriter, r *http.Request) {
 	for _, t := range req.Tags {
 		t = strings.TrimSpace(t)
 		if t != "" {
+			if len(t) > 50 {
+				t = t[:50]
+			}
 			cleanTags = append(cleanTags, t)
+			if len(cleanTags) >= 10 {
+				break
+			}
 		}
 	}
 

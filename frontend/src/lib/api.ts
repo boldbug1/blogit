@@ -21,6 +21,7 @@ export interface BlogSummary {
   created_at: string;
   author_id?: string;
   author_name: string;
+  author_avatar_url?: string;
   banner_image?: string;
   tags?: string[];
   likes_count?: number;
@@ -36,7 +37,7 @@ export interface BlogDetail {
   updated_at: string;
   author_id: string;
   author_name: string;
-  author_email: string;
+  author_avatar_url?: string;
   banner_image?: string;
   tags?: string[];
   likes_count?: number;
@@ -52,11 +53,10 @@ export interface BlogComment {
   created_at: string;
   updated_at: string;
   author_name: string;
-  author_email: string;
+  author_avatar_url?: string;
 }
 
 export interface CreateBlogPayload {
-  author_id?: string;
   title: string;
   body: string;
   banner_image?: string;
@@ -81,6 +81,7 @@ export function normalizeBlogSummary(raw: any): BlogSummary {
     ),
     author_id: String(raw.AuthorID || raw.author_id || ""),
     author_name: String(raw.AuthorName || raw.author_name || "Author"),
+    author_avatar_url: String(raw.AuthorAvatarUrl || raw.author_avatar_url || ""),
     banner_image: String(raw.BannerImage || raw.banner_image || ""),
     tags: Array.isArray(raw.Tags)
       ? raw.Tags
@@ -106,7 +107,7 @@ export function normalizeBlogDetail(raw: any): BlogDetail {
     ),
     author_id: String(raw.AuthorID || raw.author_id || ""),
     author_name: String(raw.AuthorName || raw.author_name || "Author"),
-    author_email: String(raw.AuthorEmail || raw.author_email || ""),
+    author_avatar_url: String(raw.AuthorAvatarUrl || raw.author_avatar_url || ""),
     banner_image: String(raw.BannerImage || raw.banner_image || ""),
     tags: Array.isArray(raw.Tags)
       ? raw.Tags
@@ -264,7 +265,7 @@ export const api = {
         created_at: String(c.CreatedAt?.Time || c.CreatedAt || c.created_at || ""),
         updated_at: String(c.UpdatedAt?.Time || c.UpdatedAt || c.updated_at || ""),
         author_name: String(c.AuthorName || c.author_name || "Reader"),
-        author_email: String(c.AuthorEmail || c.author_email || ""),
+        author_avatar_url: String(c.AuthorAvatarUrl || c.author_avatar_url || ""),
       }));
     },
     createComment: async (
@@ -284,7 +285,7 @@ export const api = {
         created_at: String(c.CreatedAt?.Time || c.CreatedAt || c.created_at || ""),
         updated_at: String(c.UpdatedAt?.Time || c.UpdatedAt || c.updated_at || ""),
         author_name: String(c.AuthorName || c.author_name || "Reader"),
-        author_email: String(c.AuthorEmail || c.author_email || ""),
+        author_avatar_url: String(c.AuthorAvatarUrl || c.author_avatar_url || ""),
       };
     },
   },

@@ -63,7 +63,7 @@ func (q *Queries) DeleteBlogById(ctx context.Context, id pgtype.UUID) error {
 const getBlogById = `-- name: GetBlogById :one
 SELECT 
     b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at, b.updated_at,
-    b.author_id, a.name AS author_name, a.email AS author_email,
+    b.author_id, a.name AS author_name, a.avatar_url AS author_avatar_url,
     (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
     (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
@@ -72,19 +72,19 @@ WHERE b.id = $1 LIMIT 1
 `
 
 type GetBlogByIdRow struct {
-	ID            pgtype.UUID
-	Title         string
-	Slug          string
-	Body          string
-	BannerImage   string
-	Tags          []string
-	CreatedAt     pgtype.Timestamptz
-	UpdatedAt     pgtype.Timestamptz
-	AuthorID      pgtype.UUID
-	AuthorName    string
-	AuthorEmail   string
-	LikesCount    int64
-	CommentsCount int64
+	ID              pgtype.UUID
+	Title           string
+	Slug            string
+	Body            string
+	BannerImage     string
+	Tags            []string
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+	AuthorID        pgtype.UUID
+	AuthorName      string
+	AuthorAvatarUrl string
+	LikesCount      int64
+	CommentsCount   int64
 }
 
 func (q *Queries) GetBlogById(ctx context.Context, id pgtype.UUID) (GetBlogByIdRow, error) {
@@ -101,7 +101,7 @@ func (q *Queries) GetBlogById(ctx context.Context, id pgtype.UUID) (GetBlogByIdR
 		&i.UpdatedAt,
 		&i.AuthorID,
 		&i.AuthorName,
-		&i.AuthorEmail,
+		&i.AuthorAvatarUrl,
 		&i.LikesCount,
 		&i.CommentsCount,
 	)
@@ -111,7 +111,7 @@ func (q *Queries) GetBlogById(ctx context.Context, id pgtype.UUID) (GetBlogByIdR
 const getBlogBySlug = `-- name: GetBlogBySlug :one
 SELECT 
     b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at, b.updated_at,
-    a.id AS author_id, a.name AS author_name, a.email AS author_email,
+    a.id AS author_id, a.name AS author_name, a.avatar_url AS author_avatar_url,
     (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
     (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
@@ -120,19 +120,19 @@ WHERE b.slug = $1 LIMIT 1
 `
 
 type GetBlogBySlugRow struct {
-	ID            pgtype.UUID
-	Title         string
-	Slug          string
-	Body          string
-	BannerImage   string
-	Tags          []string
-	CreatedAt     pgtype.Timestamptz
-	UpdatedAt     pgtype.Timestamptz
-	AuthorID      pgtype.UUID
-	AuthorName    string
-	AuthorEmail   string
-	LikesCount    int64
-	CommentsCount int64
+	ID              pgtype.UUID
+	Title           string
+	Slug            string
+	Body            string
+	BannerImage     string
+	Tags            []string
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+	AuthorID        pgtype.UUID
+	AuthorName      string
+	AuthorAvatarUrl string
+	LikesCount      int64
+	CommentsCount   int64
 }
 
 func (q *Queries) GetBlogBySlug(ctx context.Context, slug string) (GetBlogBySlugRow, error) {
@@ -149,7 +149,7 @@ func (q *Queries) GetBlogBySlug(ctx context.Context, slug string) (GetBlogBySlug
 		&i.UpdatedAt,
 		&i.AuthorID,
 		&i.AuthorName,
-		&i.AuthorEmail,
+		&i.AuthorAvatarUrl,
 		&i.LikesCount,
 		&i.CommentsCount,
 	)
@@ -161,6 +161,7 @@ SELECT
     b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at,
     b.author_id,
     a.name AS author_name,
+    a.avatar_url AS author_avatar_url,
     (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
     (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
@@ -175,17 +176,18 @@ type ListBlogsParams struct {
 }
 
 type ListBlogsRow struct {
-	ID            pgtype.UUID
-	Title         string
-	Slug          string
-	Body          string
-	BannerImage   string
-	Tags          []string
-	CreatedAt     pgtype.Timestamptz
-	AuthorID      pgtype.UUID
-	AuthorName    string
-	LikesCount    int64
-	CommentsCount int64
+	ID              pgtype.UUID
+	Title           string
+	Slug            string
+	Body            string
+	BannerImage     string
+	Tags            []string
+	CreatedAt       pgtype.Timestamptz
+	AuthorID        pgtype.UUID
+	AuthorName      string
+	AuthorAvatarUrl string
+	LikesCount      int64
+	CommentsCount   int64
 }
 
 func (q *Queries) ListBlogs(ctx context.Context, arg ListBlogsParams) ([]ListBlogsRow, error) {
@@ -207,6 +209,7 @@ func (q *Queries) ListBlogs(ctx context.Context, arg ListBlogsParams) ([]ListBlo
 			&i.CreatedAt,
 			&i.AuthorID,
 			&i.AuthorName,
+			&i.AuthorAvatarUrl,
 			&i.LikesCount,
 			&i.CommentsCount,
 		); err != nil {
@@ -225,6 +228,7 @@ SELECT
     b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at,
     b.author_id,
     a.name AS author_name,
+    a.avatar_url AS author_avatar_url,
     (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
     (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
@@ -241,17 +245,18 @@ type ListBlogsByAuthorParams struct {
 }
 
 type ListBlogsByAuthorRow struct {
-	ID            pgtype.UUID
-	Title         string
-	Slug          string
-	Body          string
-	BannerImage   string
-	Tags          []string
-	CreatedAt     pgtype.Timestamptz
-	AuthorID      pgtype.UUID
-	AuthorName    string
-	LikesCount    int64
-	CommentsCount int64
+	ID              pgtype.UUID
+	Title           string
+	Slug            string
+	Body            string
+	BannerImage     string
+	Tags            []string
+	CreatedAt       pgtype.Timestamptz
+	AuthorID        pgtype.UUID
+	AuthorName      string
+	AuthorAvatarUrl string
+	LikesCount      int64
+	CommentsCount   int64
 }
 
 func (q *Queries) ListBlogsByAuthor(ctx context.Context, arg ListBlogsByAuthorParams) ([]ListBlogsByAuthorRow, error) {
@@ -273,6 +278,7 @@ func (q *Queries) ListBlogsByAuthor(ctx context.Context, arg ListBlogsByAuthorPa
 			&i.CreatedAt,
 			&i.AuthorID,
 			&i.AuthorName,
+			&i.AuthorAvatarUrl,
 			&i.LikesCount,
 			&i.CommentsCount,
 		); err != nil {
@@ -291,6 +297,7 @@ SELECT
     b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at,
     b.author_id,
     a.name AS author_name,
+    a.avatar_url AS author_avatar_url,
     (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
     (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
@@ -307,17 +314,18 @@ type ListBlogsByTagParams struct {
 }
 
 type ListBlogsByTagRow struct {
-	ID            pgtype.UUID
-	Title         string
-	Slug          string
-	Body          string
-	BannerImage   string
-	Tags          []string
-	CreatedAt     pgtype.Timestamptz
-	AuthorID      pgtype.UUID
-	AuthorName    string
-	LikesCount    int64
-	CommentsCount int64
+	ID              pgtype.UUID
+	Title           string
+	Slug            string
+	Body            string
+	BannerImage     string
+	Tags            []string
+	CreatedAt       pgtype.Timestamptz
+	AuthorID        pgtype.UUID
+	AuthorName      string
+	AuthorAvatarUrl string
+	LikesCount      int64
+	CommentsCount   int64
 }
 
 func (q *Queries) ListBlogsByTag(ctx context.Context, arg ListBlogsByTagParams) ([]ListBlogsByTagRow, error) {
@@ -339,6 +347,7 @@ func (q *Queries) ListBlogsByTag(ctx context.Context, arg ListBlogsByTagParams) 
 			&i.CreatedAt,
 			&i.AuthorID,
 			&i.AuthorName,
+			&i.AuthorAvatarUrl,
 			&i.LikesCount,
 			&i.CommentsCount,
 		); err != nil {
