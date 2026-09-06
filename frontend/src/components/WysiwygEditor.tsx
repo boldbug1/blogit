@@ -213,8 +213,8 @@ export function WysiwygEditor({
   return (
     <div className="space-y-4">
       {/* Docked Formatting Toolbar directly above body box */}
-      <div className="flex flex-wrap items-center justify-between gap-2 p-2 rounded-lg bg-surface/90 backdrop-blur-md border border-outline-variant/30 shadow-xs">
-        <div className="flex flex-wrap items-center gap-1 text-on-surface">
+      <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-surface/95 backdrop-blur-md border border-outline-variant/30 shadow-xs overflow-x-auto no-scrollbar touch-pan-x sticky top-16 sm:top-20 z-20">
+        <div className="flex items-center gap-1 text-on-surface shrink-0">
           {/* Bold */}
           <button
             type="button"
@@ -417,7 +417,7 @@ export function WysiwygEditor({
         </div>
 
         {/* Undo / Redo */}
-        <div className="flex items-center gap-1 border-l border-outline-variant/30 pl-2">
+        <div className="flex items-center gap-1 border-l border-outline-variant/30 pl-2 shrink-0">
           <button
             type="button"
             onClick={() => editor.chain().focus().undo().run()}

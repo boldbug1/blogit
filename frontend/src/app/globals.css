@@ -56,6 +56,10 @@
     background-color: var(--color-background, #ffffff);
     color: var(--color-on-background, #0f172a);
     font-family: var(--font-manrope), sans-serif;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100vw;
+    -webkit-tap-highlight-color: transparent;
   }
   
   html.dark {
@@ -72,6 +76,11 @@
     height: 0 !important;
   }
 
+  button, a, [role="button"], input, textarea, select {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
   button, a, [role="button"] {
     cursor: pointer;
   }
@@ -83,12 +92,22 @@
 }
 
 /* Tactile button micro-interactions */
-button {
+button, .btn-touch {
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-tap-highlight-color: transparent;
 }
-button:active:not(:disabled) {
-  transform: scale(0.97);
+button:active:not(:disabled), .btn-touch:active {
+  transform: scale(0.975);
+}
+
+/* Utility to hide scrollbar while preserving scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .btn-primary-warm {

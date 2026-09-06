@@ -5,10 +5,12 @@
 
   <p align="center">
     <strong>The modern, distraction-free publishing platform for writers and thinkers.</strong><br />
-    No algorithms, no invasive ads just your words and your readers.
+    No algorithms, no invasive ads — just your words and your readers.
   </p>
 
   <p align="center">
+    <a href="https://blogit-pied.vercel.app"><strong>Live Application</strong></a> •
+    <a href="#showcase">Showcase</a> •
     <a href="#overview--highlights">Overview</a> •
     <a href="#features">Features</a> •
     <a href="#architecture--tech-stack">Tech Stack</a> •
@@ -16,26 +18,57 @@
   </p>
 
   <p align="center">
+    <a href="https://blogit-pied.vercel.app" target="_blank">
+      <img src="https://img.shields.io/badge/Production-blogit--pied.vercel.app-2563eb?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+    </a>
     <img src="https://img.shields.io/badge/Go-1.25-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go" />
     <img src="https://img.shields.io/badge/Next.js-16.3.4-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
     <img src="https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
-    <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+    <img src="https://img.shields.io/badge/Neon-PostgreSQL-00E599?style=for-the-badge&logo=neon&logoColor=black" alt="Neon Postgres" />
     <img src="https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-    <img src="https://img.shields.io/badge/sqlc-type--safe_SQL-blue?style=for-the-badge" alt="sqlc" />
   </p>
 </div>
+
+---
+
+## Showcase
+
+### User Experience
+<div align="center">
+  <img src="frontend/public/showcase/landing.gif" alt="blogit platform preview" width="100%" style="border-radius: 12px; box-shadow: 0 12px 36px rgba(0,0,0,0.15);" />
+</div>
+
+<br />
+
+### Product Interface
+
+| Discovery & Home Feed | Distraction-Free Reader |
+| :---: | :---: |
+| <img src="frontend/public/showcase/home.png" alt="Discovery & Feed" width="100%" /> | <img src="frontend/public/showcase/post.png" alt="Reader View" width="100%" /> |
+| *Editorial homepage with fluid WebGL aurora background, search, and topic navigation.* | *Clean typography, live reading progress, author signature, and instant reactions.* |
+
+| TipTap WYSIWYG Editor | Writer Analytics & Streaks |
+| :---: | :---: |
+| <img src="frontend/public/showcase/editor.png" alt="Editor View" width="100%" /> | <img src="frontend/public/showcase/dashboard.png" alt="Dashboard" width="100%" /> |
+| *Live formatted writing, sticky mobile toolbar, image uploads, and real-time preview.* | *GitHub-style 52-week publishing heatmap, story metrics, and publication management.* |
+
+| Adaptive Custom Themes | Account & Profile Settings |
+| :---: | :---: |
+| <img src="frontend/public/showcase/themes.png" alt="Themes & Customization" width="100%" /> | <img src="frontend/public/showcase/settings.png" alt="Settings & Preferences" width="100%" /> |
+| *Fluid theme switcher across warm editorial palettes and high-contrast dark modes.* | *Author profile editing, bio customization, and security controls.* |
 
 ---
 
 ## Overview & Highlights
 
 - **Sahara Editorial Aesthetic**: Warm sand canvas (`#faf5ee`), rich terracotta accents (`#c2652a`), deep espresso typography (`#2c2420`), and serif editorial headings (`EB Garamond`).
-- **Live WYSIWYG Editor**: Powered by TipTap v3 with distraction-free floating title/subtitle inputs, markdown shortcut support, and instant visual feedback.
-- **Client-Side Image Optimization**: HTML5 canvas compression automatically optimizes photos before publishing, keeping payloads lightweight (~150-250KB).
-- **GitHub-Style Contribution Heatmap**: Visualizes a rolling 52-week publishing streak with real-time statistics (current streak, longest streak, annual contributions) calculated from PostgreSQL records.
-- **Distraction-Free Reading Experience**: Clean article reader with a live scroll reading progress bar, macOS-styled code blocks with 1-click copy, and author footer with social sharing.
-- **Robust Go Backend**: Zero bloated frameworks—uses stdlib `net/http` `ServeMux`, connection pooling via `pgxpool`, and compile-time verified queries via `sqlc`.
-- **JWT Authentication**: Secure user registration and login with bcrypt password hashing and token-based route protection.
+- **Live WYSIWYG Editor**: Powered by TipTap v3 with distraction-free floating title/subtitle inputs, markdown shortcut support, sticky mobile formatting toolbar, and instant visual feedback.
+- **1-Click Google OAuth & JWT Sessions**: Seamless, passwordless Google authentication with cryptographic verification and author provisioning.
+- **Neon Cloud Postgres**: Serverless PostgreSQL database with startup migrations (`goose`) and connection pooling (`pgxpool`).
+- **Client-Side Image Optimization**: Automatic compression optimizes photos before publishing, keeping payloads lightweight (~150-250KB).
+- **GitHub-Style Contribution Heatmap**: Visualizes a rolling 52-week publishing streak with real-time statistics (current streak, longest streak, annual contributions).
+- **Distraction-Free Reading Experience**: Clean article reader with a live reading progress bar, floating mobile reaction pill, code blocks with 1-click copy, and Web Share API integration.
+- **Robust Go Backend with Rate Limiting**: Built with Go stdlib `net/http` `ServeMux`, compile-time verified queries via `sqlc`, and in-memory rate limiting.
 
 ---
 

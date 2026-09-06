@@ -208,7 +208,7 @@ export function AuroraShader({
     const currentMouse = { x: 0.5, y: 0.5 };
     let speed = 0.0;
 
-    // Fast, zero-reflow mouse tracking (no getBoundingClientRect calls)
+    // Fast, zero-reflow mouse & touch tracking (no getBoundingClientRect calls)
     const handleMouseMove = (e: MouseEvent) => {
       const w = window.innerWidth;
       const h = window.innerHeight;
@@ -217,7 +217,18 @@ export function AuroraShader({
         targetMouse.y = 1.0 - e.clientY / h;
       }
     };
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches && e.touches[0]) {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        if (w > 0 && h > 0) {
+          targetMouse.x = e.touches[0].clientX / w;
+          targetMouse.y = 1.0 - e.touches[0].clientY / h;
+        }
+      }
+    };
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
 
     // Pause rendering when tab is hidden to save resources
     const handleVisibilityChange = () => {
@@ -254,6 +265,7 @@ export function AuroraShader({
       isRunning = false;
       window.removeEventListener("resize", handleWindowResize);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       cancelAnimationFrame(animFrameId);
     };

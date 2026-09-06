@@ -28,9 +28,32 @@ export function CommentsDrawer({
   const [replyContent, setReplyContent] = useState("");
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Lock body scroll and handle Escape key while drawer is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   useEffect(() => {
     if (isOpen && blogId) {
       setIsLoading(true);
+      setErrorMessage(null);
       api.blogs
         .listComments(blogId)
         .then((data) => {
@@ -39,6 +62,7 @@ export function CommentsDrawer({
         })
         .catch((err) => {
           console.error("Failed to load comments:", err);
+          setErrorMessage("Unable to load comments right now.");
         })
         .finally(() => {
           setIsLoading(false);
@@ -51,6 +75,7 @@ export function CommentsDrawer({
     if (!newComment.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
+    setErrorMessage(null);
     try {
       const created = await api.blogs.createComment(blogId, {
         content: newComment.trim(),
@@ -60,7 +85,7 @@ export function CommentsDrawer({
       setNewComment("");
       onCommentCountChange?.(updated.length);
     } catch (err: any) {
-      alert(err.message || "Failed to post comment");
+      setErrorMessage(err.message || "Failed to post comment");
     } finally {
       setIsSubmitting(false);
     }
@@ -70,6 +95,7 @@ export function CommentsDrawer({
     if (!replyContent.trim() || isSubmittingReply) return;
 
     setIsSubmittingReply(true);
+    setErrorMessage(null);
     try {
       const created = await api.blogs.createComment(blogId, {
         content: replyContent.trim(),
@@ -81,7 +107,7 @@ export function CommentsDrawer({
       setReplyingToId(null);
       onCommentCountChange?.(updated.length);
     } catch (err: any) {
-      alert(err.message || "Failed to post reply");
+      setErrorMessage(err.message || "Failed to post reply");
     } finally {
       setIsSubmittingReply(false);
     }
@@ -129,6 +155,19 @@ export function CommentsDrawer({
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {errorMessage && (
+            <div className="p-3 rounded-lg bg-error/10 border border-error/20 text-xs text-error flex items-center justify-between">
+              <span>{errorMessage}</span>
+              <button
+                type="button"
+                onClick={() => setErrorMessage(null)}
+                className="text-error/70 hover:text-error p-0.5"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
           {/* Post Comment Input */}
           {user ? (
             <form

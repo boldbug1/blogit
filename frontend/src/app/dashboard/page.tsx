@@ -22,6 +22,8 @@ import {
   Trash2,
   AlertTriangle,
   Loader2,
+  Share2,
+  Check,
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -369,6 +371,19 @@ export default function DashboardPage() {
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0 self-end md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-outline-variant/20 w-full md:w-auto justify-end">
+                        <button
+                          type="button"
+                          onClick={() => handleCopyLink(blog.slug)}
+                          className="p-2.5 rounded-lg border border-outline-variant/40 bg-surface hover:bg-surface-container-low hover:border-primary/40 text-on-surface-variant hover:text-primary transition-all shadow-2xs flex items-center justify-center shrink-0 cursor-pointer"
+                          title="Copy story link"
+                          aria-label={`Copy link for ${blog.title}`}
+                        >
+                          {copiedSlug === blog.slug ? (
+                            <Check className="w-4 h-4 text-emerald-600" />
+                          ) : (
+                            <Share2 className="w-4 h-4 text-on-surface-variant hover:text-primary transition-colors" />
+                          )}
+                        </button>
                         <Link
                           href={`/editor/${blog.id}`}
                           className="p-2.5 rounded-lg border border-outline-variant/40 bg-surface hover:bg-surface-container-low hover:border-primary/40 text-on-surface-variant hover:text-primary transition-all shadow-2xs flex items-center justify-center shrink-0 group/edit"

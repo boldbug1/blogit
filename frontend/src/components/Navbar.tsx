@@ -72,15 +72,15 @@ function SearchInput() {
   return (
     <form
       onSubmit={handleSearchSubmit}
-      className="relative w-40 xs:w-52 sm:w-60 md:w-72"
+      className="relative w-28 xs:w-44 sm:w-60 md:w-72 transition-all min-w-[100px]"
     >
-      <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-on-surface-variant/60 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+      <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-on-surface-variant/60 absolute left-2.5 sm:left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
       <input
         type="text"
         value={searchQuery}
         onChange={(e) => updateSearch(e.target.value)}
-        placeholder="Search stories..."
-        className="w-full pl-8 sm:pl-9 pr-7 py-1.5 text-xs sm:text-sm bg-surface-container-low hover:bg-surface-container focus:bg-surface border border-outline-variant/40 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all text-on-surface placeholder:text-on-surface-variant/50 shadow-2xs"
+        placeholder="Search..."
+        className="w-full pl-7 sm:pl-9 pr-6 sm:pr-7 py-1.5 text-xs sm:text-sm bg-surface-container-low hover:bg-surface-container focus:bg-surface border border-outline-variant/40 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all text-on-surface placeholder:text-on-surface-variant/50 shadow-2xs"
       />
       {searchQuery && (
         <button
@@ -102,7 +102,7 @@ export function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Close sidebar on Escape
+  // Close sidebar on Escape and lock background scroll
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -113,6 +113,16 @@ export function Navbar() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  useEffect(() => {
+    if (sidebarOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [sidebarOpen]);
 
   return (
     <>

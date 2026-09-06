@@ -89,8 +89,23 @@ export default function BlogDetailClient({ slug }: BlogDetailClientProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleShare = () => {
-    if (typeof window !== "undefined") {
+  const handleShare = async () => {
+    if (typeof window !== "undefined" && blog) {
+      const shareData = {
+        title: blog.title,
+        text: `Read "${blog.title}" on blogit`,
+        url: window.location.href,
+      };
+
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        try {
+          await navigator.share(shareData);
+          return;
+        } catch (err: any) {
+          if (err.name === "AbortError") return;
+        }
+      }
+
       navigator.clipboard.writeText(window.location.href);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -104,12 +119,24 @@ export default function BlogDetailClient({ slug }: BlogDetailClientProps) {
     }
     if (!blog) return;
 
+    // Instant optimistic update
+    const previousLiked = isLiked;
+    const previousCount = likesCount;
+    const newLiked = !previousLiked;
+    const newCount = newLiked ? previousCount + 1 : Math.max(0, previousCount - 1);
+
+    setIsLiked(newLiked);
+    setLikesCount(newCount);
+
     try {
       const res = await api.blogs.toggleLike(blog.id);
       setIsLiked(res.liked);
       setLikesCount(res.count);
     } catch (err) {
       console.error("Failed to toggle like", err);
+      // Revert if network call failed
+      setIsLiked(previousLiked);
+      setLikesCount(previousCount);
     }
   };
 
@@ -393,6 +420,53 @@ export default function BlogDetailClient({ slug }: BlogDetailClientProps) {
             </Link>
             <span>/{blog.slug}</span>
           </div>
+        </div>
+
+        {/* Floating Mobile Action Pill (Sticky at bottom on phones for quick like/comment/share) */}
+        <div className="sm:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-surface/95 backdrop-blur-xl border border-outline-variant/60 shadow-xl rounded-full px-5 py-2.5 flex items-center gap-6 text-xs text-on-surface transition-all">
+          <button
+            type="button"
+            onClick={handleToggleLike}
+            className={`flex items-center gap-1.5 font-medium transition-colors ${
+              isLiked ? "text-primary" : "text-on-surface-variant hover:text-on-surface"
+            }`}
+            title={user ? "Like story" : "Sign in to like"}
+          >
+            <Heart
+              className={`w-4 h-4 transition-transform active:scale-125 duration-150 ${
+                isLiked ? "fill-primary text-primary" : ""
+              }`}
+            />
+            <span>{likesCount}</span>
+          </button>
+
+          <div className="w-px h-3.5 bg-outline-variant/40" />
+
+          <button
+            type="button"
+            onClick={() => setIsCommentsOpen(true)}
+            className="flex items-center gap-1.5 font-medium text-on-surface-variant hover:text-on-surface transition-colors"
+            title="View responses"
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>{commentsCount}</span>
+          </button>
+
+          <div className="w-px h-3.5 bg-outline-variant/40" />
+
+          <button
+            type="button"
+            onClick={handleShare}
+            className="flex items-center gap-1.5 font-medium text-on-surface-variant hover:text-primary transition-colors"
+            title="Share story"
+          >
+            {copied ? (
+              <Check className="w-4 h-4 text-emerald-600" />
+            ) : (
+              <Share2 className="w-4 h-4 text-primary" />
+            )}
+            <span>{copied ? "Copied" : "Share"}</span>
+          </button>
         </div>
       </main>
 
