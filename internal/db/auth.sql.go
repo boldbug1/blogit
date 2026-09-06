@@ -70,3 +70,21 @@ func (q *Queries) GetAuthorById(ctx context.Context, id pgtype.UUID) (Author, er
 	)
 	return i, err
 }
+
+const getAuthorByName = `-- name: GetAuthorByName :one
+SELECT id, name, email, created_at, password_hash FROM authors
+WHERE LOWER(name) = LOWER($1)
+`
+
+func (q *Queries) GetAuthorByName(ctx context.Context, lower string) (Author, error) {
+	row := q.db.QueryRow(ctx, getAuthorByName, lower)
+	var i Author
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.CreatedAt,
+		&i.PasswordHash,
+	)
+	return i, err
+}

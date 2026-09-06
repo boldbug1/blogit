@@ -53,6 +53,16 @@ func (s *Server) handleRegister(w http.ResponseWriter , r *http.Request) {
 		return
 	}
 
+	// Check if username already taken
+	existingAuthor, err := s.queries.GetAuthorByName(r.Context(), req.Name)
+	if err == nil && existingAuthor.ID.Valid {
+		writeError(w, http.StatusConflict, "Username is already taken. Please choose another.")
+		return
+	} else if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		writeError(w, http.StatusInternalServerError, "failed to check username")
+		return
+	}
+
 	hash,err:= bcrypt.GenerateFromPassword([]byte(req.Password),bcrypt.DefaultCost)
 
 	if err != nil {
@@ -140,3 +150,33 @@ func (s *Server) handleMe(w http.ResponseWriter, r *http.Request) {
 
   writeJSON(w,http.StatusOK,newAuthorResponse(author))
 }
+
+type CheckUsernameResponse struct {
+	Available bool   `json:"available"`
+	Message   string `json:"message,omitempty"`
+}
+
+func (s *Server) handleCheckUsername(w http.ResponseWriter, r *http.Request) {
+	name := strings.TrimSpace(r.URL.Query().Get("name"))
+	if name == "" {
+		writeError(w, http.StatusBadRequest, "name parameter is required")
+		return
+	}
+
+	author, err := s.queries.GetAuthorByName(r.Context(), name)
+	if err == nil && author.ID.Valid {
+		writeJSON(w, http.StatusOK, CheckUsernameResponse{
+			Available: false,
+			Message:   "Username is already taken",
+		})
+		return
+	}
+	if errors.Is(err, pgx.ErrNoRows) {
+		writeJSON(w, http.StatusOK, CheckUsernameResponse{
+			Available: true,
+			Message:   "Username is available",
+		})
+		return
+	}
+	writeError(w, http.StatusInternalServerError, "failed to check username")
+}

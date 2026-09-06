@@ -17,11 +17,30 @@ type Author struct {
 }
 
 type Blog struct {
+	ID          pgtype.UUID
+	AuthorID    pgtype.UUID
+	Title       string
+	Slug        string
+	Body        string
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
+	BannerImage string
+	Tags        []string
+}
+
+type BlogComment struct {
 	ID        pgtype.UUID
+	BlogID    pgtype.UUID
 	AuthorID  pgtype.UUID
-	Title     string
-	Slug      string
-	Body      string
+	ParentID  pgtype.UUID
+	Content   string
 	CreatedAt pgtype.Timestamptz
 	UpdatedAt pgtype.Timestamptz
+}
+
+type BlogLike struct {
+	ID        pgtype.UUID
+	BlogID    pgtype.UUID
+	AuthorID  pgtype.UUID
+	CreatedAt pgtype.Timestamptz
 }

@@ -9,3 +9,7 @@ WHERE email=$1;
 -- name: GetAuthorById :one
 SELECT * FROM authors
 WHERE id = $1;
+
+-- name: GetAuthorByName :one
+SELECT * FROM authors
+WHERE LOWER(name) = LOWER($1);

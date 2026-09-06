@@ -12,16 +12,18 @@ import (
 )
 
 const createBlog = `-- name: CreateBlog :one
-INSERT INTO blogs (author_id, title, slug, body)
-VALUES ($1, $2, $3, $4)
-RETURNING id, author_id, title, slug, body, created_at, updated_at
+INSERT INTO blogs (author_id, title, slug, body, banner_image, tags)
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, author_id, title, slug, body, created_at, updated_at, banner_image, tags
 `
 
 type CreateBlogParams struct {
-	AuthorID pgtype.UUID
-	Title    string
-	Slug     string
-	Body     string
+	AuthorID    pgtype.UUID
+	Title       string
+	Slug        string
+	Body        string
+	BannerImage string
+	Tags        []string
 }
 
 func (q *Queries) CreateBlog(ctx context.Context, arg CreateBlogParams) (Blog, error) {
@@ -30,6 +32,8 @@ func (q *Queries) CreateBlog(ctx context.Context, arg CreateBlogParams) (Blog, e
 		arg.Title,
 		arg.Slug,
 		arg.Body,
+		arg.BannerImage,
+		arg.Tags,
 	)
 	var i Blog
 	err := row.Scan(
@@ -40,29 +44,85 @@ func (q *Queries) CreateBlog(ctx context.Context, arg CreateBlogParams) (Blog, e
 		&i.Body,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.BannerImage,
+		&i.Tags,
+	)
+	return i, err
+}
+
+const getBlogById = `-- name: GetBlogById :one
+SELECT 
+    b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at, b.updated_at,
+    b.author_id, a.name AS author_name, a.email AS author_email,
+    (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
+    (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
+FROM blogs b
+JOIN authors a ON a.id = b.author_id
+WHERE b.id = $1 LIMIT 1
+`
+
+type GetBlogByIdRow struct {
+	ID            pgtype.UUID
+	Title         string
+	Slug          string
+	Body          string
+	BannerImage   string
+	Tags          []string
+	CreatedAt     pgtype.Timestamptz
+	UpdatedAt     pgtype.Timestamptz
+	AuthorID      pgtype.UUID
+	AuthorName    string
+	AuthorEmail   string
+	LikesCount    int64
+	CommentsCount int64
+}
+
+func (q *Queries) GetBlogById(ctx context.Context, id pgtype.UUID) (GetBlogByIdRow, error) {
+	row := q.db.QueryRow(ctx, getBlogById, id)
+	var i GetBlogByIdRow
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Slug,
+		&i.Body,
+		&i.BannerImage,
+		&i.Tags,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.AuthorID,
+		&i.AuthorName,
+		&i.AuthorEmail,
+		&i.LikesCount,
+		&i.CommentsCount,
 	)
 	return i, err
 }
 
 const getBlogBySlug = `-- name: GetBlogBySlug :one
 SELECT 
-    b.id, b.title, b.slug, b.body, b.created_at, b.updated_at,
-    a.id AS author_id, a.name AS author_name, a.email AS author_email
+    b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at, b.updated_at,
+    a.id AS author_id, a.name AS author_name, a.email AS author_email,
+    (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
+    (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
 JOIN authors a ON a.id = b.author_id
 WHERE b.slug = $1 LIMIT 1
 `
 
 type GetBlogBySlugRow struct {
-	ID          pgtype.UUID
-	Title       string
-	Slug        string
-	Body        string
-	CreatedAt   pgtype.Timestamptz
-	UpdatedAt   pgtype.Timestamptz
-	AuthorID    pgtype.UUID
-	AuthorName  string
-	AuthorEmail string
+	ID            pgtype.UUID
+	Title         string
+	Slug          string
+	Body          string
+	BannerImage   string
+	Tags          []string
+	CreatedAt     pgtype.Timestamptz
+	UpdatedAt     pgtype.Timestamptz
+	AuthorID      pgtype.UUID
+	AuthorName    string
+	AuthorEmail   string
+	LikesCount    int64
+	CommentsCount int64
 }
 
 func (q *Queries) GetBlogBySlug(ctx context.Context, slug string) (GetBlogBySlugRow, error) {
@@ -73,19 +133,26 @@ func (q *Queries) GetBlogBySlug(ctx context.Context, slug string) (GetBlogBySlug
 		&i.Title,
 		&i.Slug,
 		&i.Body,
+		&i.BannerImage,
+		&i.Tags,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.AuthorID,
 		&i.AuthorName,
 		&i.AuthorEmail,
+		&i.LikesCount,
+		&i.CommentsCount,
 	)
 	return i, err
 }
 
 const listBlogs = `-- name: ListBlogs :many
 SELECT 
-    b.id, b.title, b.slug, b.body, b.created_at,
-    a.name AS author_name
+    b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at,
+    b.author_id,
+    a.name AS author_name,
+    (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
+    (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
 FROM blogs b
 JOIN authors a ON a.id = b.author_id
 ORDER BY b.created_at DESC
@@ -98,12 +165,17 @@ type ListBlogsParams struct {
 }
 
 type ListBlogsRow struct {
-	ID         pgtype.UUID
-	Title      string
-	Slug       string
-	Body       string
-	CreatedAt  pgtype.Timestamptz
-	AuthorName string
+	ID            pgtype.UUID
+	Title         string
+	Slug          string
+	Body          string
+	BannerImage   string
+	Tags          []string
+	CreatedAt     pgtype.Timestamptz
+	AuthorID      pgtype.UUID
+	AuthorName    string
+	LikesCount    int64
+	CommentsCount int64
 }
 
 func (q *Queries) ListBlogs(ctx context.Context, arg ListBlogsParams) ([]ListBlogsRow, error) {
@@ -120,8 +192,13 @@ func (q *Queries) ListBlogs(ctx context.Context, arg ListBlogsParams) ([]ListBlo
 			&i.Title,
 			&i.Slug,
 			&i.Body,
+			&i.BannerImage,
+			&i.Tags,
 			&i.CreatedAt,
+			&i.AuthorID,
 			&i.AuthorName,
+			&i.LikesCount,
+			&i.CommentsCount,
 		); err != nil {
 			return nil, err
 		}
@@ -133,24 +210,192 @@ func (q *Queries) ListBlogs(ctx context.Context, arg ListBlogsParams) ([]ListBlo
 	return items, nil
 }
 
+const listBlogsByAuthor = `-- name: ListBlogsByAuthor :many
+SELECT 
+    b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at,
+    b.author_id,
+    a.name AS author_name,
+    (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
+    (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
+FROM blogs b
+JOIN authors a ON a.id = b.author_id
+WHERE b.author_id = $1
+ORDER BY b.created_at DESC
+LIMIT $2 OFFSET $3
+`
+
+type ListBlogsByAuthorParams struct {
+	AuthorID pgtype.UUID
+	Limit    int32
+	Offset   int32
+}
+
+type ListBlogsByAuthorRow struct {
+	ID            pgtype.UUID
+	Title         string
+	Slug          string
+	Body          string
+	BannerImage   string
+	Tags          []string
+	CreatedAt     pgtype.Timestamptz
+	AuthorID      pgtype.UUID
+	AuthorName    string
+	LikesCount    int64
+	CommentsCount int64
+}
+
+func (q *Queries) ListBlogsByAuthor(ctx context.Context, arg ListBlogsByAuthorParams) ([]ListBlogsByAuthorRow, error) {
+	rows, err := q.db.Query(ctx, listBlogsByAuthor, arg.AuthorID, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListBlogsByAuthorRow
+	for rows.Next() {
+		var i ListBlogsByAuthorRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Slug,
+			&i.Body,
+			&i.BannerImage,
+			&i.Tags,
+			&i.CreatedAt,
+			&i.AuthorID,
+			&i.AuthorName,
+			&i.LikesCount,
+			&i.CommentsCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listBlogsByTag = `-- name: ListBlogsByTag :many
+SELECT 
+    b.id, b.title, b.slug, b.body, b.banner_image, b.tags, b.created_at,
+    b.author_id,
+    a.name AS author_name,
+    (SELECT COUNT(*)::bigint FROM blog_likes WHERE blog_id = b.id) AS likes_count,
+    (SELECT COUNT(*)::bigint FROM blog_comments WHERE blog_id = b.id) AS comments_count
+FROM blogs b
+JOIN authors a ON a.id = b.author_id
+WHERE $3::text = ANY(b.tags)
+ORDER BY b.created_at DESC
+LIMIT $1 OFFSET $2
+`
+
+type ListBlogsByTagParams struct {
+	Limit  int32
+	Offset int32
+	Tag    string
+}
+
+type ListBlogsByTagRow struct {
+	ID            pgtype.UUID
+	Title         string
+	Slug          string
+	Body          string
+	BannerImage   string
+	Tags          []string
+	CreatedAt     pgtype.Timestamptz
+	AuthorID      pgtype.UUID
+	AuthorName    string
+	LikesCount    int64
+	CommentsCount int64
+}
+
+func (q *Queries) ListBlogsByTag(ctx context.Context, arg ListBlogsByTagParams) ([]ListBlogsByTagRow, error) {
+	rows, err := q.db.Query(ctx, listBlogsByTag, arg.Limit, arg.Offset, arg.Tag)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListBlogsByTagRow
+	for rows.Next() {
+		var i ListBlogsByTagRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Slug,
+			&i.Body,
+			&i.BannerImage,
+			&i.Tags,
+			&i.CreatedAt,
+			&i.AuthorID,
+			&i.AuthorName,
+			&i.LikesCount,
+			&i.CommentsCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listDistinctTags = `-- name: ListDistinctTags :many
+SELECT DISTINCT unnest(tags)::text AS tag
+FROM blogs
+WHERE array_length(tags, 1) > 0
+`
+
+func (q *Queries) ListDistinctTags(ctx context.Context) ([]string, error) {
+	rows, err := q.db.Query(ctx, listDistinctTags)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var tag string
+		if err := rows.Scan(&tag); err != nil {
+			return nil, err
+		}
+		items = append(items, tag)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateBlogById = `-- name: UpdateBlogById :one
 UPDATE blogs
 SET 
-    title      = COALESCE($2, title),
-    body       = COALESCE($3, body),
-    updated_at = NOW()
+    title        = COALESCE($2, title),
+    body         = COALESCE($3, body),
+    banner_image = COALESCE($4, banner_image),
+    tags         = COALESCE($5, tags),
+    updated_at   = NOW()
 WHERE id = $1
-RETURNING id, author_id, title, slug, body, created_at, updated_at
+RETURNING id, author_id, title, slug, body, created_at, updated_at, banner_image, tags
 `
 
 type UpdateBlogByIdParams struct {
-	ID    pgtype.UUID
-	Title pgtype.Text
-	Body  pgtype.Text
+	ID          pgtype.UUID
+	Title       pgtype.Text
+	Body        pgtype.Text
+	BannerImage pgtype.Text
+	Tags        []string
 }
 
 func (q *Queries) UpdateBlogById(ctx context.Context, arg UpdateBlogByIdParams) (Blog, error) {
-	row := q.db.QueryRow(ctx, updateBlogById, arg.ID, arg.Title, arg.Body)
+	row := q.db.QueryRow(ctx, updateBlogById,
+		arg.ID,
+		arg.Title,
+		arg.Body,
+		arg.BannerImage,
+		arg.Tags,
+	)
 	var i Blog
 	err := row.Scan(
 		&i.ID,
@@ -160,6 +405,8 @@ func (q *Queries) UpdateBlogById(ctx context.Context, arg UpdateBlogByIdParams) 
 		&i.Body,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.BannerImage,
+		&i.Tags,
 	)
 	return i, err
 }
