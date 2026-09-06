@@ -4,6 +4,7 @@ import Link from "next/link";
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useTheme } from "@/context/ThemeContext";
 import { Logo } from "@/components/Logo";
 import {
   Menu,
@@ -16,6 +17,8 @@ import {
   SquarePen,
   Tag,
   ArrowRight,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 const POPULAR_TOPICS = [
@@ -95,6 +98,7 @@ function SearchInput() {
 
 export function Navbar() {
   const { user, logout } = useAuth();
+  const { mode, toggleMode } = useTheme();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -112,7 +116,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 w-full z-40 bg-[#faf5ee]/95 backdrop-blur-xl border-b border-[#d8d0c8]/40 shadow-[0_2px_12px_rgba(58,48,42,0.03)] transition-all">
+      <header className="fixed top-0 w-full z-40 bg-surface/90 backdrop-blur-xl border-b border-outline-variant/30 shadow-xs transition-all">
         <div className="h-16 sm:h-18 w-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3 sm:gap-4">
           {/* Left: Menu Button, Logo, and Adjacent Search Input */}
           <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
@@ -120,7 +124,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
-              className="p-2 -ml-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-black/5 transition-colors shrink-0"
+              className="p-2 -ml-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-black/5 dark:hover:bg-white/10 transition-colors shrink-0"
               aria-label="Open navigation sidebar"
               title="Navigation Menu"
             >
@@ -136,12 +140,27 @@ export function Navbar() {
             </Suspense>
           </div>
 
-          {/* Right: Write Button and User Profile / Auth */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Right: Theme Toggle, Write Button and User Profile / Auth */}
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+            {/* Dark / Light Mode Toggle */}
+            <button
+              type="button"
+              onClick={toggleMode}
+              className="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              aria-label="Toggle dark mode"
+              title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {mode === "dark" ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-secondary" />
+              )}
+            </button>
+
             {/* Write Button */}
             <Link
               href={user ? "/editor/new" : "/login"}
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-on-surface-variant hover:text-primary transition-colors py-1.5 px-2.5 rounded-lg hover:bg-black/5"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-on-surface-variant hover:text-primary transition-colors py-1.5 px-2.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10"
             >
               <SquarePen className="w-4 h-4 text-primary" />
               <span className="hidden xs:inline">Write</span>
@@ -253,7 +272,7 @@ export function Navbar() {
           />
 
           {/* Drawer Sheet */}
-          <aside className="relative w-72 sm:w-80 max-w-[85vw] bg-[#faf5ee] border-r border-outline-variant/30 shadow-2xl z-50 p-6 flex flex-col justify-between animate-in slide-in-from-left duration-200">
+          <aside className="relative w-72 sm:w-80 max-w-[85vw] bg-surface border-r border-outline-variant/30 shadow-2xl z-50 p-6 flex flex-col justify-between animate-in slide-in-from-left duration-200">
             <div className="space-y-6">
               {/* Header inside Drawer */}
               <div className="flex items-center justify-between pb-4 border-b border-outline-variant/30">
@@ -335,8 +354,27 @@ export function Navbar() {
               </div>
             </div>
 
+            {/* Theme Mode row inside drawer */}
+            <div className="py-3 border-t border-outline-variant/30 flex items-center justify-between">
+              <span className="text-xs font-medium text-on-surface flex items-center gap-2">
+                {mode === "dark" ? (
+                  <Moon className="w-4 h-4 text-primary" />
+                ) : (
+                  <Sun className="w-4 h-4 text-amber-500" />
+                )}
+                <span>{mode === "dark" ? "Dark Mode" : "Light Mode"}</span>
+              </span>
+              <button
+                type="button"
+                onClick={toggleMode}
+                className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-surface-container-low border border-outline-variant/40 text-on-surface hover:text-primary transition-colors"
+              >
+                Switch to {mode === "dark" ? "Light" : "Dark"}
+              </button>
+            </div>
+
             {/* Bottom Account / Auth Block in Drawer */}
-            <div className="pt-4 border-t border-outline-variant/30">
+            <div className="pt-3 border-t border-outline-variant/30">
               {user ? (
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 px-2">

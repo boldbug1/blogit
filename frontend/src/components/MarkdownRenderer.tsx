@@ -223,12 +223,12 @@ export function MarkdownRenderer({
             </thead>
           ),
           tbody: ({ children }) => (
-            <tbody className="divide-y divide-outline-variant/20 bg-white">
+            <tbody className="divide-y divide-outline-variant/20 bg-surface">
               {children}
             </tbody>
           ),
           tr: ({ children }) => (
-            <tr className="hover:bg-[#faf5ee]/60 transition-colors">
+            <tr className="hover:bg-surface-container-low transition-colors">
               {children}
             </tr>
           ),

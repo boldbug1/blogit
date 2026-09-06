@@ -111,9 +111,9 @@ export function CommentsDrawer({
       />
 
       {/* Drawer Panel */}
-      <div className="relative w-full max-w-lg bg-[#faf5ee] h-full shadow-2xl border-l border-outline-variant/30 flex flex-col z-10 animate-in slide-in-from-right duration-200">
+      <div className="relative w-full max-w-lg bg-surface h-full shadow-2xl border-l border-outline-variant/30 flex flex-col z-10 animate-in slide-in-from-right duration-200">
         {/* Drawer Header */}
-        <div className="h-16 px-6 border-b border-outline-variant/30 flex items-center justify-between bg-white/70 backdrop-blur-md shrink-0">
+        <div className="h-16 px-6 border-b border-outline-variant/30 flex items-center justify-between bg-surface/80 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-2 font-headline font-bold text-lg text-on-surface">
             <MessageSquare className="w-5 h-5 text-primary" />
             <span>Responses ({comments.length})</span>

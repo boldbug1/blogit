@@ -4,7 +4,7 @@ import { Logo } from "@/components/Logo";
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#faf5ee] border-t border-[#d8d0c8]/40 pt-16 pb-12 text-sm text-on-surface-variant relative z-10">
+    <footer className="w-full bg-surface border-t border-outline-variant/30 pt-16 pb-12 text-sm text-on-surface-variant relative z-10">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-12 gap-10">
         <div className="md:col-span-6 space-y-4">
           <Logo />
