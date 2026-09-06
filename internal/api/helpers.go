@@ -96,6 +96,7 @@ func newAuthorResponse(a db.Author) authorResponse {
     ID:        a.ID.String(),
     Name:      a.Name,
     Email:     a.Email,
+    AvatarUrl: a.AvatarUrl,
     CreatedAt: a.CreatedAt.Time.Format(time.RFC3339),
   }
 }

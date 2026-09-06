@@ -75,4 +75,9 @@ SET
     tags         = COALESCE(sqlc.narg('tags'), tags),
     updated_at   = NOW()
 WHERE id = $1
-RETURNING *;
+RETURNING *;
+
+-- name: DeleteBlogById :exec
+DELETE FROM blogs
+WHERE id = $1;
+

@@ -13,7 +13,9 @@ type Author struct {
 	Name         string
 	Email        string
 	CreatedAt    pgtype.Timestamptz
-	PasswordHash string
+	PasswordHash pgtype.Text
+	GoogleID     pgtype.Text
+	AvatarUrl    string
 }
 
 type Blog struct {
@@ -42,5 +44,11 @@ type BlogLike struct {
 	ID        pgtype.UUID
 	BlogID    pgtype.UUID
 	AuthorID  pgtype.UUID
+	CreatedAt pgtype.Timestamptz
+}
+
+type NewsletterSubscriber struct {
+	ID        pgtype.UUID
+	Email     string
 	CreatedAt pgtype.Timestamptz
 }

@@ -274,3 +274,44 @@ func (s *Server) handleUpdateBlog(w http.ResponseWriter, r *http.Request) {
 
 	writeJSON(w, http.StatusOK, blog)
 }
+
+func (s *Server) handleDeleteBlog(w http.ResponseWriter, r *http.Request) {
+	currentUserID, ok := CurrentUserID(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, "unauthorized")
+		return
+	}
+
+	idStr := r.PathValue("id")
+	var id pgtype.UUID
+	if err := id.Scan(idStr); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid blog id format")
+		return
+	}
+
+	// Verify blog exists and that requesting user is the author
+	existing, err := s.queries.GetBlogById(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			writeError(w, http.StatusNotFound, "blog post not found")
+			return
+		}
+		writeError(w, http.StatusInternalServerError, "failed to fetch blog post")
+		return
+	}
+
+	if existing.AuthorID != currentUserID {
+		writeError(w, http.StatusForbidden, "you can only delete your own stories")
+		return
+	}
+
+	if err := s.queries.DeleteBlogById(r.Context(), id); err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to delete blog post")
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]string{
+		"message": "Blog deleted successfully",
+	})
+}
+

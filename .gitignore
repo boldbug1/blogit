@@ -1,4 +1,6 @@
 .env
+.env.*
+!.env.example
 *.exe
 *.test
 /tmp/
@@ -9,3 +11,6 @@ frontend/node_modules/
 frontend/.next/
 frontend/out/
 frontend/.env*.local
+.neon
+node_modules
+.agents

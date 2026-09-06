@@ -13,13 +13,13 @@ import (
 
 const createAuthor = `-- name: CreateAuthor :one
 INSERT INTO authors (name,email,password_hash) VALUES ($1,$2,$3)
-RETURNING id, name, email, created_at, password_hash
+RETURNING id, name, email, created_at, password_hash, google_id, avatar_url
 `
 
 type CreateAuthorParams struct {
 	Name         string
 	Email        string
-	PasswordHash string
+	PasswordHash pgtype.Text
 }
 
 func (q *Queries) CreateAuthor(ctx context.Context, arg CreateAuthorParams) (Author, error) {
@@ -31,12 +31,14 @@ func (q *Queries) CreateAuthor(ctx context.Context, arg CreateAuthorParams) (Aut
 		&i.Email,
 		&i.CreatedAt,
 		&i.PasswordHash,
+		&i.GoogleID,
+		&i.AvatarUrl,
 	)
 	return i, err
 }
 
 const getAuthorByEmail = `-- name: GetAuthorByEmail :one
-SELECT id, name, email, created_at, password_hash FROM authors
+SELECT id, name, email, created_at, password_hash, google_id, avatar_url FROM authors
 WHERE email=$1
 `
 
@@ -49,12 +51,34 @@ func (q *Queries) GetAuthorByEmail(ctx context.Context, email string) (Author, e
 		&i.Email,
 		&i.CreatedAt,
 		&i.PasswordHash,
+		&i.GoogleID,
+		&i.AvatarUrl,
+	)
+	return i, err
+}
+
+const getAuthorByGoogleId = `-- name: GetAuthorByGoogleId :one
+SELECT id, name, email, created_at, password_hash, google_id, avatar_url FROM authors
+WHERE google_id = $1
+`
+
+func (q *Queries) GetAuthorByGoogleId(ctx context.Context, googleID pgtype.Text) (Author, error) {
+	row := q.db.QueryRow(ctx, getAuthorByGoogleId, googleID)
+	var i Author
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.CreatedAt,
+		&i.PasswordHash,
+		&i.GoogleID,
+		&i.AvatarUrl,
 	)
 	return i, err
 }
 
 const getAuthorById = `-- name: GetAuthorById :one
-SELECT id, name, email, created_at, password_hash FROM authors
+SELECT id, name, email, created_at, password_hash, google_id, avatar_url FROM authors
 WHERE id = $1
 `
 
@@ -67,12 +91,14 @@ func (q *Queries) GetAuthorById(ctx context.Context, id pgtype.UUID) (Author, er
 		&i.Email,
 		&i.CreatedAt,
 		&i.PasswordHash,
+		&i.GoogleID,
+		&i.AvatarUrl,
 	)
 	return i, err
 }
 
 const getAuthorByName = `-- name: GetAuthorByName :one
-SELECT id, name, email, created_at, password_hash FROM authors
+SELECT id, name, email, created_at, password_hash, google_id, avatar_url FROM authors
 WHERE LOWER(name) = LOWER($1)
 `
 
@@ -85,6 +111,46 @@ func (q *Queries) GetAuthorByName(ctx context.Context, lower string) (Author, er
 		&i.Email,
 		&i.CreatedAt,
 		&i.PasswordHash,
+		&i.GoogleID,
+		&i.AvatarUrl,
+	)
+	return i, err
+}
+
+const upsertAuthorFromGoogle = `-- name: UpsertAuthorFromGoogle :one
+INSERT INTO authors (name, email, google_id, avatar_url, password_hash)
+VALUES ($1, $2, $3, $4, '')
+ON CONFLICT (email) DO UPDATE
+SET 
+    google_id = EXCLUDED.google_id,
+    avatar_url = CASE WHEN EXCLUDED.avatar_url <> '' THEN EXCLUDED.avatar_url ELSE authors.avatar_url END,
+    name = CASE WHEN authors.name = '' OR authors.name IS NULL THEN EXCLUDED.name ELSE authors.name END
+RETURNING id, name, email, created_at, password_hash, google_id, avatar_url
+`
+
+type UpsertAuthorFromGoogleParams struct {
+	Name      string
+	Email     string
+	GoogleID  pgtype.Text
+	AvatarUrl string
+}
+
+func (q *Queries) UpsertAuthorFromGoogle(ctx context.Context, arg UpsertAuthorFromGoogleParams) (Author, error) {
+	row := q.db.QueryRow(ctx, upsertAuthorFromGoogle,
+		arg.Name,
+		arg.Email,
+		arg.GoogleID,
+		arg.AvatarUrl,
+	)
+	var i Author
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.CreatedAt,
+		&i.PasswordHash,
+		&i.GoogleID,
+		&i.AvatarUrl,
 	)
 	return i, err
 }

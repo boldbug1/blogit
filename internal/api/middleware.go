@@ -3,6 +3,7 @@ package api
 import (
   "context"
   "net/http"
+  "os"
   "strings"
 
   "github.com/golang-jwt/jwt/v5"
@@ -44,8 +45,18 @@ func CurrentUserID(r *http.Request) (pgtype.UUID, bool) {
 }
 
 func (s *Server) EnableCORS(next http.Handler) http.Handler {
+  allowedOrigin := os.Getenv("ALLOWED_ORIGIN")
   return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Access-Control-Allow-Origin", "*")
+    origin := r.Header.Get("Origin")
+    if allowedOrigin != "" {
+      w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
+      w.Header().Set("Access-Control-Allow-Credentials", "true")
+    } else if origin != "" {
+      w.Header().Set("Access-Control-Allow-Origin", origin)
+      w.Header().Set("Access-Control-Allow-Credentials", "true")
+    } else {
+      w.Header().Set("Access-Control-Allow-Origin", "*")
+    }
     w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
     w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization, X-CSRF-Token")
 
