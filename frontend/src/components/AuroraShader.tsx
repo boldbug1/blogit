@@ -17,30 +17,60 @@ export function AuroraShader({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    // Use WebGL context with optimized attributes
     const gl =
-      canvas.getContext("webgl") ||
+      canvas.getContext("webgl", {
+        alpha: true,
+        antialias: false,
+        depth: false,
+        stencil: false,
+        powerPreference: "low-power",
+        preserveDrawingBuffer: false,
+      }) ||
       (canvas.getContext("experimental-webgl") as WebGLRenderingContext | null);
 
     if (!gl) return;
 
     let animFrameId: number;
+    let isRunning = true;
 
-    function syncSize() {
+    // Scale factor: 0.5x resolution cuts GPU fragment fill-rate by 75%,
+    // producing a much softer, dreamier ambient aurora while keeping scrolling locked at 60-120fps.
+    const RENDER_SCALE = 0.5;
+
+    function resizeCanvas() {
       if (!canvas) return;
-      const w = canvas.clientWidth || window.innerWidth;
-      const h = canvas.clientHeight || window.innerHeight;
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w;
-        canvas.height = h;
+      const displayWidth = window.innerWidth;
+      const displayHeight = window.innerHeight;
+
+      // Cap internal buffer resolution to max 960x540 for silky-smooth performance
+      const targetW = Math.min(960, Math.round(displayWidth * RENDER_SCALE));
+      const targetH = Math.min(540, Math.round(displayHeight * RENDER_SCALE));
+
+      if (canvas.width !== targetW || canvas.height !== targetH) {
+        canvas.width = targetW;
+        canvas.height = targetH;
+        if (gl) {
+          gl.viewport(0, 0, targetW, targetH);
+        }
       }
     }
 
-    let resizeObserver: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== "undefined") {
-      resizeObserver = new ResizeObserver(syncSize);
-      resizeObserver.observe(canvas);
-    }
-    syncSize();
+    // Initial resize
+    resizeCanvas();
+
+    // Listen to resize on window debounced via RAF (NEVER read clientWidth in render loop)
+    let resizeScheduled = false;
+    const handleWindowResize = () => {
+      if (!resizeScheduled) {
+        resizeScheduled = true;
+        requestAnimationFrame(() => {
+          resizeCanvas();
+          resizeScheduled = false;
+        });
+      }
+    };
+    window.addEventListener("resize", handleWindowResize, { passive: true });
 
     const vs = `
       attribute vec2 a_position;
@@ -52,7 +82,7 @@ export function AuroraShader({
     `;
 
     const fs = `
-      precision highp float;
+      precision mediump float;
       uniform float u_time;
       uniform vec2 u_resolution;
       uniform vec2 u_mouse;
@@ -89,42 +119,40 @@ export function AuroraShader({
 
       void main() {
         vec2 st = gl_FragCoord.xy / u_resolution.xy;
-        float t = u_time * 0.18;
+        float t = u_time * 0.16;
 
-        // Smooth ocean fluid ripple around cursor
+        // Smooth fluid displacement around mouse
         vec2 delta = st - u_mouse;
         delta.x *= u_resolution.x / u_resolution.y;
         float dist = length(delta);
 
-        // Fluid mixing wave that dissipates naturally with distance
-        float fluidRipple = sin(dist * 16.0 - u_time * 2.5) * exp(-dist * 4.5) * min(u_speed * 12.0, 0.35);
+        float fluidRipple = sin(dist * 14.0 - u_time * 2.2) * exp(-dist * 4.2) * min(u_speed * 10.0, 0.3);
         vec2 fluidDisplace = normalize(delta + 0.0001) * fluidRipple;
-
         vec2 p = st + fluidDisplace;
 
-        float n1 = snoise(p * 1.5 + vec2(t * 0.35, t * 0.25));
-        float n2 = snoise(p * 2.2 - vec2(t * 0.3, -t * 0.4) + vec2(n1 * 0.6));
-        float n3 = snoise(p * 3.4 + vec2(n2 * 0.4, t * 0.2));
+        float n1 = snoise(p * 1.4 + vec2(t * 0.3, t * 0.22));
+        float n2 = snoise(p * 2.0 - vec2(t * 0.25, -t * 0.35) + vec2(n1 * 0.5));
+        float n3 = snoise(p * 3.0 + vec2(n2 * 0.35, t * 0.18));
 
         vec3 baseColor = vec3(0.988, 0.976, 0.961);
         vec3 peachColor = vec3(0.975, 0.902, 0.827);
         vec3 amberColor = vec3(0.91, 0.659, 0.424);
         vec3 terraColor = vec3(0.761, 0.396, 0.165);
 
-        float wave1 = smoothstep(-0.4, 0.6, sin(p.x * 2.5 + p.y * 1.3 + n1 * 1.3 + t));
-        float wave2 = smoothstep(-0.3, 0.7, cos(p.x * 1.8 - p.y * 2.0 + n2 * 1.5 - t * 0.7));
-        float wave3 = smoothstep(0.0, 0.8, snoise(p * 1.1 + vec2(t * 0.12)));
+        float wave1 = smoothstep(-0.4, 0.6, sin(p.x * 2.2 + p.y * 1.2 + n1 * 1.2 + t));
+        float wave2 = smoothstep(-0.3, 0.7, cos(p.x * 1.6 - p.y * 1.8 + n2 * 1.4 - t * 0.65));
+        float wave3 = smoothstep(0.0, 0.8, snoise(p * 1.0 + vec2(t * 0.1)));
 
         vec3 col = mix(baseColor, peachColor, wave1 * 0.85);
         col = mix(col, amberColor, wave2 * 0.45);
         col = mix(col, terraColor, wave3 * 0.28 * wave1);
 
         // Subtle fluid glow near cursor
-        col = mix(col, amberColor, smoothstep(0.3, 0.0, dist) * u_speed * 0.25);
+        col = mix(col, amberColor, smoothstep(0.3, 0.0, dist) * u_speed * 0.2);
 
-        // Tactile micro-grain
+        // Soft micro-texture
         float grain = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);
-        col += (grain - 0.5) * 0.03;
+        col += (grain - 0.5) * 0.02;
 
         gl_FragColor = vec4(col, 1.0);
       }
@@ -137,7 +165,6 @@ export function AuroraShader({
       gl.shaderSource(s, src);
       gl.compileShader(s);
       if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-        console.warn(gl.getShaderInfoLog(s));
         gl.deleteShader(s);
         return null;
       }
@@ -155,7 +182,6 @@ export function AuroraShader({
     gl.linkProgram(prog);
 
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      console.warn(gl.getProgramInfoLog(prog));
       return;
     }
 
@@ -182,22 +208,30 @@ export function AuroraShader({
     const currentMouse = { x: 0.5, y: 0.5 };
     let speed = 0.0;
 
+    // Fast, zero-reflow mouse tracking (no getBoundingClientRect calls)
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      if (rect.width && rect.height) {
-        targetMouse.x = (e.clientX - rect.left) / rect.width;
-        targetMouse.y = 1.0 - (e.clientY - rect.top) / rect.height;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (w > 0 && h > 0) {
+        targetMouse.x = e.clientX / w;
+        targetMouse.y = 1.0 - e.clientY / h;
       }
     };
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
-    window.addEventListener("mousemove", handleMouseMove);
+    // Pause rendering when tab is hidden to save resources
+    const handleVisibilityChange = () => {
+      isRunning = !document.hidden;
+      if (isRunning) {
+        animFrameId = requestAnimationFrame(render);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     function render(time: number) {
-      if (!gl || !canvas) return;
-      syncSize();
-      gl.viewport(0, 0, canvas.width, canvas.height);
+      if (!isRunning || !gl || !canvas) return;
 
-      // Damped spring interpolation for silky-smooth fluid response with zero lag
+      // Smooth spring damping
       const dx = targetMouse.x - currentMouse.x;
       const dy = targetMouse.y - currentMouse.y;
       currentMouse.x += dx * 0.08;
@@ -217,23 +251,30 @@ export function AuroraShader({
     animFrameId = requestAnimationFrame(render);
 
     return () => {
+      isRunning = false;
+      window.removeEventListener("resize", handleWindowResize);
       window.removeEventListener("mousemove", handleMouseMove);
-      if (resizeObserver) resizeObserver.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       cancelAnimationFrame(animFrameId);
     };
   }, []);
 
   return (
     <div
-      className={`${className} aurora-bg-mesh`}
-      style={{ display: "block" }}
+      className={`${className} transform-gpu will-change-transform pointer-events-none`}
+      style={{
+        display: "block",
+        transform: "translate3d(0,0,0)",
+        backfaceVisibility: "hidden",
+      }}
       aria-hidden="true"
     >
       <canvas
         ref={canvasRef}
-        className="w-full h-full block mix-blend-multiply opacity-85"
-        width={1280}
-        height={720}
+        className="w-full h-full block mix-blend-multiply opacity-85 transform-gpu"
+        style={{
+          imageRendering: "auto",
+        }}
       />
     </div>
   );

@@ -129,7 +129,7 @@ export default function NewPostPage() {
                 onClick={() => setIsPreviewMode(false)}
                 className={`px-3 py-1 rounded-md font-medium transition-all ${
                   !isPreviewMode
-                    ? "bg-white shadow-sm text-on-surface font-semibold"
+                    ? "bg-surface shadow-xs text-on-surface font-semibold"
                     : "text-on-surface-variant hover:text-on-surface"
                 }`}
               >
@@ -140,7 +140,7 @@ export default function NewPostPage() {
                 onClick={() => setIsPreviewMode(true)}
                 className={`px-3 py-1 rounded-md font-medium transition-all ${
                   isPreviewMode
-                    ? "bg-white shadow-sm text-on-surface font-semibold"
+                    ? "bg-surface shadow-xs text-on-surface font-semibold"
                     : "text-on-surface-variant hover:text-on-surface"
                 }`}
               >
@@ -150,7 +150,7 @@ export default function NewPostPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/70 border border-outline-variant/30 text-xs text-on-surface-variant font-mono">
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-outline-variant/40 text-xs text-on-surface-variant font-mono">
               <Clock className="w-3.5 h-3.5 text-primary" />
               <span>
                 {wordCount} words · ~{readTimeMinutes} min
@@ -192,14 +192,14 @@ export default function NewPostPage() {
               <button
                 type="button"
                 onClick={() => setIsBannerModalOpen(true)}
-                className="btn-secondary-warm text-xs px-3 py-1.5 bg-white/90"
+                className="btn-secondary-warm text-xs px-3 py-1.5 bg-surface/90"
               >
                 Change banner
               </button>
               <button
                 type="button"
                 onClick={() => setBannerImage("")}
-                className="btn-secondary-warm text-xs px-3 py-1.5 bg-white/90 text-error hover:text-error"
+                className="btn-secondary-warm text-xs px-3 py-1.5 bg-surface/90 text-error hover:text-error"
               >
                 Remove
               </button>
@@ -210,7 +210,7 @@ export default function NewPostPage() {
             <button
               type="button"
               onClick={() => setIsBannerModalOpen(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-on-surface-variant hover:text-primary transition-colors py-1 px-2 rounded-lg hover:bg-black/5"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-on-surface-variant hover:text-primary transition-colors py-1 px-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10"
             >
               <ImageIcon className="w-4 h-4" />
               <span>Add cover banner</span>
@@ -238,7 +238,7 @@ export default function NewPostPage() {
         </div>
 
         {/* Tags Selector Section */}
-        <div className="mb-6 p-4 rounded-lg bg-white/60 border border-outline-variant/30 space-y-2.5">
+        <div className="mb-6 p-4 rounded-lg bg-surface border border-outline-variant/40 space-y-2.5">
           <div className="flex items-center gap-2 text-xs font-semibold text-on-surface-variant">
             <Tag className="w-3.5 h-3.5 text-primary" />
             <span>Story Topics &amp; Tags</span>
@@ -312,7 +312,7 @@ export default function NewPostPage() {
               Rendered Body Preview
             </div>
             {/* ONLY the body is in the white box */}
-            <div className="bg-white border border-[#e4ddd2] shadow-xs p-6 sm:p-10 min-h-[500px] rounded-lg">
+            <div className="bg-surface border border-outline-variant/40 shadow-xs p-6 sm:p-10 min-h-[500px] rounded-lg">
               <MarkdownRenderer content={body || "*No story content yet...*"} />
             </div>
           </div>

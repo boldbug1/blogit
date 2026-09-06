@@ -176,7 +176,7 @@ export function ImageInsertModal({
               }}
               className={`flex-1 py-2 rounded-sm font-medium flex items-center justify-center gap-1.5 transition-all ${
                 tab === "upload"
-                  ? "bg-white shadow-sm text-on-surface font-semibold"
+                  ? "bg-surface shadow-xs text-on-surface font-semibold"
                   : "text-on-surface-variant hover:text-on-surface"
               }`}
             >
@@ -191,7 +191,7 @@ export function ImageInsertModal({
               }}
               className={`flex-1 py-2 rounded-sm font-medium flex items-center justify-center gap-1.5 transition-all ${
                 tab === "url"
-                  ? "bg-white shadow-sm text-on-surface font-semibold"
+                  ? "bg-surface shadow-xs text-on-surface font-semibold"
                   : "text-on-surface-variant hover:text-on-surface"
               }`}
             >
@@ -236,7 +236,7 @@ export function ImageInsertModal({
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="btn-secondary-warm text-xs px-3 py-1.5 bg-white/90"
+                      className="btn-secondary-warm text-xs px-3 py-1.5 bg-surface/90"
                     >
                       Change File
                     </button>
@@ -246,7 +246,7 @@ export function ImageInsertModal({
                         setUploadedDataUrl(null);
                         setFileName("");
                       }}
-                      className="btn-secondary-warm text-xs px-3 py-1.5 bg-white/90 text-error"
+                      className="btn-secondary-warm text-xs px-3 py-1.5 bg-surface/90 text-error hover:text-error"
                     >
                       Remove
                     </button>

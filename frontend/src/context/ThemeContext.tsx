@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import defaultThemesData from "@/data/themes.json";
+import { useAuth } from "@/context/AuthContext";
 
 export type ColorMode = "light" | "dark";
 
@@ -73,18 +74,18 @@ export function applyThemeToDOM(theme: Theme, mode: ColorMode) {
   root.style.setProperty("--color-secondary", theme.colors.secondary);
 
   if (mode === "dark") {
-    // Dark mode palette
+    // Cohesive, modern dark mode palette
     const bg = theme.isCustom && theme.mode === "dark" && theme.colors.background
       ? theme.colors.background
       : "#090d16";
     const surface = theme.isCustom && theme.mode === "dark" && theme.colors.surface
       ? theme.colors.surface
       : "#0f172a";
-    const surfaceContainer = "#1e293b";
-    const surfaceContainerLow = "#131d31";
+    const surfaceContainer = "#161f30";
+    const surfaceContainerLow = "#0d1424";
     const onSurface = "#f8fafc";
     const onSurfaceVariant = "#94a3b8";
-    const outlineVariant = "#273549";
+    const outlineVariant = "#1e293b";
 
     root.style.setProperty("--color-background", bg);
     root.style.setProperty("--color-surface", surface);
@@ -94,8 +95,8 @@ export function applyThemeToDOM(theme: Theme, mode: ColorMode) {
     root.style.setProperty("--color-surface-cream", surfaceContainerLow);
     root.style.setProperty("--color-surface-container", surfaceContainer);
     root.style.setProperty("--color-surface-container-low", surfaceContainerLow);
-    root.style.setProperty("--color-surface-container-high", "#28374d");
-    root.style.setProperty("--color-surface-container-highest", "#33445e");
+    root.style.setProperty("--color-surface-container-high", "#223049");
+    root.style.setProperty("--color-surface-container-highest", "#2d3f5e");
     root.style.setProperty("--color-surface-container-lowest", "#090d16");
 
     root.style.setProperty("--color-on-background", onSurface);
@@ -106,18 +107,14 @@ export function applyThemeToDOM(theme: Theme, mode: ColorMode) {
     root.style.setProperty("--color-outline-variant", outlineVariant);
     root.style.setProperty("--color-border-warm", outlineVariant);
   } else {
-    // Light mode palette: crisp pure WHITE background
-    const bg = theme.isCustom && theme.mode === "light" && theme.colors.background
-      ? theme.colors.background
-      : "#ffffff";
-    const surface = theme.isCustom && theme.mode === "light" && theme.colors.surface
-      ? theme.colors.surface
-      : "#ffffff";
-    const surfaceContainer = "#f1f5f9";
-    const surfaceContainerLow = "#f8fafc";
-    const onSurface = "#0f172a";
-    const onSurfaceVariant = "#64748b";
-    const outlineVariant = "#e2e8f0";
+    // Light mode palette: crisp pure white or theme-specified background
+    const bg = theme.colors.background || "#ffffff";
+    const surface = theme.colors.surface || "#ffffff";
+    const surfaceContainer = theme.colors.surfaceContainer || "#f1f5f9";
+    const surfaceContainerLow = theme.colors.surfaceContainerLow || "#f8fafc";
+    const onSurface = theme.colors.onSurface || "#0f172a";
+    const onSurfaceVariant = theme.colors.onSurfaceVariant || "#64748b";
+    const outlineVariant = theme.colors.outlineVariant || "#e2e8f0";
 
     root.style.setProperty("--color-background", bg);
     root.style.setProperty("--color-surface", surface);
@@ -146,13 +143,14 @@ export function applyThemeToDOM(theme: Theme, mode: ColorMode) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
   const [themes, setThemes] = useState<Theme[]>(
     defaultThemesData as Theme[]
   );
-  const [activeThemeId, setActiveThemeId] = useState<string>("indigo");
+  const [activeThemeId, setActiveThemeId] = useState<string>("sahara");
   const [mode, setModeState] = useState<ColorMode>("light");
 
-  // Load custom themes, active theme, and mode from localStorage on client mount
+  // Load custom themes from localStorage on client mount
   useEffect(() => {
     try {
       const storedCustom = localStorage.getItem("blogit_custom_themes");
@@ -168,28 +166,37 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         }
       }
       setThemes(allThemes);
-
-      const savedThemeId = localStorage.getItem("blogit_active_theme");
-      const targetId =
-        savedThemeId && allThemes.some((t) => t.id === savedThemeId)
-          ? savedThemeId
-          : "indigo";
-
-      const savedMode = localStorage.getItem("blogit_mode") as ColorMode | null;
-      const targetMode = savedMode === "dark" ? "dark" : "light";
-
-      setActiveThemeId(targetId);
-      setModeState(targetMode);
-
-      const active =
-        allThemes.find((t) => t.id === targetId) || allThemes[0];
-      if (active) {
-        applyThemeToDOM(active, targetMode);
-      }
     } catch (e) {
       console.error("Failed to initialize themes:", e);
     }
   }, []);
+
+  // Sync theme when user logs in or logs out
+  useEffect(() => {
+    if (!user) {
+      // Signed-out users: strictly default signature Sahara theme in light mode
+      const saharaTheme = themes.find((t) => t.id === "sahara") || themes[0];
+      if (saharaTheme) {
+        setActiveThemeId("sahara");
+        setModeState("light");
+        applyThemeToDOM(saharaTheme, "light");
+      }
+    } else {
+      // Signed-in users: retrieve their saved theme and mode preferences
+      try {
+        const savedThemeId = localStorage.getItem("blogit_active_theme") || "sahara";
+        const savedMode = (localStorage.getItem("blogit_mode") as ColorMode) || "light";
+        const targetTheme = themes.find((t) => t.id === savedThemeId) || themes[0];
+        setActiveThemeId(savedThemeId);
+        setModeState(savedMode);
+        if (targetTheme) {
+          applyThemeToDOM(targetTheme, savedMode);
+        }
+      } catch (e) {
+        console.error("Failed to load user theme preference:", e);
+      }
+    }
+  }, [user, themes]);
 
   const activeTheme =
     themes.find((t) => t.id === activeThemeId) ||

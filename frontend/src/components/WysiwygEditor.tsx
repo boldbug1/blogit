@@ -178,7 +178,7 @@ export function WysiwygEditor({
 
   if (!editor) {
     return (
-      <div className="w-full h-96 bg-white/95 rounded-lg border border-outline-variant/30 animate-pulse flex items-center justify-center text-sm text-on-surface-variant">
+      <div className="w-full h-96 bg-surface rounded-lg border border-outline-variant/30 animate-pulse flex items-center justify-center text-sm text-on-surface-variant">
         Loading editor...
       </div>
     );
@@ -213,7 +213,7 @@ export function WysiwygEditor({
   return (
     <div className="space-y-4">
       {/* Docked Formatting Toolbar directly above body box */}
-      <div className="flex flex-wrap items-center justify-between gap-2 p-2 rounded-lg bg-white/90 backdrop-blur-md border border-outline-variant/30 shadow-xs">
+      <div className="flex flex-wrap items-center justify-between gap-2 p-2 rounded-lg bg-surface/90 backdrop-blur-md border border-outline-variant/30 shadow-xs">
         <div className="flex flex-wrap items-center gap-1 text-on-surface">
           {/* Bold */}
           <button
@@ -448,7 +448,7 @@ export function WysiwygEditor({
           <button
             type="button"
             onClick={() => editor.chain().focus().addRowAfter().run()}
-            className="px-2.5 py-1 rounded bg-white hover:bg-primary/10 hover:text-primary border border-outline-variant/30 transition-colors inline-flex items-center gap-1"
+            className="px-2.5 py-1 rounded bg-surface hover:bg-primary/10 hover:text-primary border border-outline-variant/30 transition-colors inline-flex items-center gap-1"
           >
             <Plus className="w-3 h-3" />
             <span>Row</span>
@@ -456,7 +456,7 @@ export function WysiwygEditor({
           <button
             type="button"
             onClick={() => editor.chain().focus().addColumnAfter().run()}
-            className="px-2.5 py-1 rounded bg-white hover:bg-primary/10 hover:text-primary border border-outline-variant/30 transition-colors inline-flex items-center gap-1"
+            className="px-2.5 py-1 rounded bg-surface hover:bg-primary/10 hover:text-primary border border-outline-variant/30 transition-colors inline-flex items-center gap-1"
           >
             <Plus className="w-3 h-3" />
             <span>Column</span>
@@ -464,14 +464,14 @@ export function WysiwygEditor({
           <button
             type="button"
             onClick={() => editor.chain().focus().deleteRow().run()}
-            className="px-2.5 py-1 rounded bg-white hover:bg-error/10 hover:text-error border border-outline-variant/30 transition-colors"
+            className="px-2.5 py-1 rounded bg-surface hover:bg-error/10 hover:text-error border border-outline-variant/30 transition-colors"
           >
             Delete Row
           </button>
           <button
             type="button"
             onClick={() => editor.chain().focus().deleteColumn().run()}
-            className="px-2.5 py-1 rounded bg-white hover:bg-error/10 hover:text-error border border-outline-variant/30 transition-colors"
+            className="px-2.5 py-1 rounded bg-surface hover:bg-error/10 hover:text-error border border-outline-variant/30 transition-colors"
           >
             Delete Column
           </button>
@@ -688,7 +688,7 @@ export function WysiwygEditor({
       {isLinkPromptOpen && (
         <form
           onSubmit={handleApplyLink}
-          className="p-3 rounded-md bg-white border border-outline-variant/40 shadow-md flex items-center gap-2 text-xs"
+          className="p-3 rounded-md bg-surface border border-outline-variant/40 shadow-md flex items-center gap-2 text-xs"
         >
           <Link2 className="w-4 h-4 text-primary shrink-0" />
           <input
@@ -717,7 +717,7 @@ export function WysiwygEditor({
 
       {/* Connected Document Body Area */}
       <div
-        className="bg-white border border-outline-variant/40 shadow-xs p-6 sm:p-10 min-h-[500px] transition-all focus-within:border-primary/40 focus-within:shadow-sm cursor-text rounded-lg"
+        className="bg-surface border border-outline-variant/40 shadow-xs p-6 sm:p-10 min-h-[500px] transition-all focus-within:border-primary/40 focus-within:shadow-sm cursor-text rounded-lg"
         onClick={() => {
           if (!editor.isFocused) {
             editor.commands.focus();

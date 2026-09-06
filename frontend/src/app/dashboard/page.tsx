@@ -113,7 +113,7 @@ export default function DashboardPage() {
 
           {/* Real Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="p-6 rounded-lg bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div className="p-6 rounded-lg bg-surface border border-outline-variant/40 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-on-surface-variant mb-3">
                 <span className="text-xs uppercase tracking-wider font-semibold font-body text-secondary">
                   Published Posts
@@ -130,7 +130,7 @@ export default function DashboardPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-lg bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div className="p-6 rounded-lg bg-surface border border-outline-variant/40 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-on-surface-variant mb-3">
                 <span className="text-xs uppercase tracking-wider font-semibold font-body text-secondary">
                   Total Views
@@ -145,7 +145,7 @@ export default function DashboardPage() {
               </p>
             </div>
 
-            <div className="p-6 rounded-lg bg-white/80 border border-outline-variant/40 shadow-sm flex flex-col justify-between">
+            <div className="p-6 rounded-lg bg-surface border border-outline-variant/40 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-on-surface-variant mb-3">
                 <span className="text-xs uppercase tracking-wider font-semibold font-body text-secondary">
                   Subscribers
@@ -162,7 +162,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Analytics Section */}
-          <div className="p-6 sm:p-7 rounded-lg bg-white/80 border border-outline-variant/40 shadow-sm space-y-6">
+          <div className="p-6 sm:p-7 rounded-lg bg-surface border border-outline-variant/40 shadow-sm space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="font-headline text-2xl text-on-surface font-bold tracking-tight">
@@ -183,7 +183,7 @@ export default function DashboardPage() {
                       onClick={() => setActiveMetric(metric)}
                       className={`capitalize px-3 py-1.5 rounded-sm font-medium transition-all ${
                         activeMetric === metric
-                          ? "bg-white shadow-sm text-on-surface font-semibold"
+                          ? "bg-surface shadow-sm text-on-surface font-semibold"
                           : "text-on-surface-variant hover:text-on-surface"
                       }`}
                     >
@@ -242,19 +242,19 @@ export default function DashboardPage() {
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="p-6 rounded-lg bg-white/80 border border-outline-variant/30 flex items-center justify-between gap-6 animate-pulse"
+                    className="p-6 rounded-lg bg-surface border border-outline-variant/30 flex items-center justify-between gap-6 animate-pulse"
                   >
                     <div className="space-y-3 flex-1">
-                      <div className="h-4 w-32 bg-[#e8e0d5]/70 rounded" />
-                      <div className="h-6 w-3/4 bg-[#e8e0d5]/70 rounded-md" />
-                      <div className="h-3.5 w-1/2 bg-[#e8e0d5]/70 rounded" />
+                      <div className="h-4 w-32 bg-surface-container-high rounded" />
+                      <div className="h-6 w-3/4 bg-surface-container-high rounded-md" />
+                      <div className="h-3.5 w-1/2 bg-surface-container-high rounded" />
                     </div>
-                    <div className="h-20 w-24 bg-[#e8e0d5]/70 rounded-md hidden sm:block shrink-0" />
+                    <div className="h-20 w-24 bg-surface-container-high rounded-md hidden sm:block shrink-0" />
                   </div>
                 ))}
               </div>
             ) : blogs.length === 0 ? (
-              <div className="p-16 rounded-lg bg-white/70 border border-dashed border-outline-variant/60 text-center space-y-4 max-w-2xl mx-auto">
+              <div className="p-16 rounded-lg bg-surface border border-dashed border-outline-variant/60 text-center space-y-4 max-w-2xl mx-auto">
                 <div className="w-14 h-14 rounded-lg bg-primary/10 text-primary flex items-center justify-center mx-auto">
                   <PenSquare className="w-7 h-7" />
                 </div>
@@ -287,7 +287,7 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={uniqueKey}
-                      className="p-6 rounded-lg bg-white/80 hover:bg-white border border-outline-variant/30 hover:border-primary/40 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6 group"
+                      className="p-6 rounded-lg bg-surface hover:bg-surface-container-low border border-outline-variant/30 hover:border-primary/40 transition-all duration-200 shadow-sm hover:shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6 group"
                     >
                       <div className="flex flex-col sm:flex-row items-start gap-4 min-w-0 flex-1">
                         {coverImage && (
@@ -307,7 +307,7 @@ export default function DashboardPage() {
 
                         <div className="space-y-2 min-w-0 flex-1">
                           <div className="flex flex-wrap items-center gap-2 text-xs">
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-primary-fixed text-on-primary-fixed">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20">
                               Published
                             </span>
                             <span className="text-on-surface-variant font-mono">
@@ -349,7 +349,7 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-2 shrink-0 self-end md:self-center pt-2 md:pt-0 border-t md:border-t-0 border-outline-variant/20 w-full md:w-auto justify-end">
                         <Link
                           href={`/editor/${blog.id}`}
-                          className="p-2.5 rounded-lg border border-outline-variant/40 bg-white hover:bg-primary/10 hover:border-primary/40 text-on-surface-variant hover:text-primary transition-all shadow-2xs flex items-center justify-center shrink-0 group/edit"
+                          className="p-2.5 rounded-lg border border-outline-variant/40 bg-surface hover:bg-surface-container-low hover:border-primary/40 text-on-surface-variant hover:text-primary transition-all shadow-2xs flex items-center justify-center shrink-0 group/edit"
                           title="Edit story"
                           aria-label={`Edit ${blog.title}`}
                         >

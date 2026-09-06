@@ -42,9 +42,9 @@ export default function RootLayout({
           className="fixed inset-0 pointer-events-none -z-10 opacity-[0.045] mix-blend-multiply paper-grain"
           aria-hidden="true"
         />
-        <ThemeProvider>
-          <AuthProvider>{children}</AuthProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

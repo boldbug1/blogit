@@ -8,7 +8,7 @@ export function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={`bg-[#e8e0d5]/70 animate-pulse rounded-lg ${className}`}
+      className={`bg-surface-container-high animate-pulse rounded-lg ${className}`}
       {...props}
     />
   );
@@ -31,7 +31,7 @@ export function DashboardSkeleton() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="p-6 rounded-lg bg-white/80 border border-outline-variant/30 space-y-4"
+            className="p-6 rounded-lg bg-surface border border-outline-variant/30 space-y-4"
           >
             <div className="flex justify-between items-center">
               <Skeleton className="h-3.5 w-24 rounded" />
@@ -44,7 +44,7 @@ export function DashboardSkeleton() {
       </div>
 
       {/* Analytics Card Skeleton */}
-      <div className="p-7 sm:p-8 rounded-lg bg-white/80 border border-outline-variant/30 space-y-6">
+      <div className="p-7 sm:p-8 rounded-lg bg-surface border border-outline-variant/30 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-2">
             <Skeleton className="h-6 w-32 rounded-lg" />
@@ -67,7 +67,7 @@ export function DashboardSkeleton() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="p-6 rounded-lg bg-white/80 border border-outline-variant/30 flex items-center justify-between gap-6"
+            className="p-6 rounded-lg bg-surface border border-outline-variant/30 flex items-center justify-between gap-6"
           >
             <div className="space-y-3 flex-1">
               <div className="flex gap-3">

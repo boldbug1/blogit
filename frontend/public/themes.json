@@ -65,22 +65,22 @@
   {
     "id": "sahara",
     "name": "Sahara Terracotta",
-    "description": "Warm artisanal terracotta accent on pure white editorial canvas",
+    "description": "Signature sun-baked terracotta with warm editorial canvas and peach glow",
     "mode": "light",
     "colors": {
       "primary": "#c2652a",
       "primaryContainer": "#e08850",
       "primaryFixed": "#fbe8d8",
-      "secondary": "#64748b",
-      "background": "#ffffff",
+      "secondary": "#78706a",
+      "background": "#faf5ee",
       "surface": "#ffffff",
-      "surfaceCream": "#f8fafc",
-      "surfaceContainer": "#f1f5f9",
-      "surfaceContainerLow": "#f8fafc",
-      "onSurface": "#0f172a",
-      "onSurfaceVariant": "#64748b",
-      "outlineVariant": "#e2e8f0",
-      "borderWarm": "#e2e8f0"
+      "surfaceCream": "#fdfaf6",
+      "surfaceContainer": "#f4ede4",
+      "surfaceContainerLow": "#faf5ee",
+      "onSurface": "#2c2420",
+      "onSurfaceVariant": "#6d645e",
+      "outlineVariant": "#e5dcd3",
+      "borderWarm": "#e5dcd3"
     }
   },
   {

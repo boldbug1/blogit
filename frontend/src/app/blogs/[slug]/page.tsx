@@ -188,11 +188,11 @@ export default function BlogDetailPage() {
             </span>
           </div>
 
-          {/* Unified Story Document Canvas (Connected White Sheet with Soft-Sharp Boundaries) */}
-          <div className="bg-white border border-[#e4ddd2] shadow-xs rounded-lg overflow-hidden">
+          {/* Unified Story Document Canvas (Connected Document Sheet with Soft-Sharp Boundaries) */}
+          <div className="bg-surface border border-outline-variant/40 shadow-xs rounded-lg overflow-hidden">
             {/* 1. Cover Banner (Above post title, connected directly to post) */}
             {blog.banner_image && (
-              <div className="w-full bg-[#f6f0e8] border-b border-[#e4ddd2] overflow-hidden">
+              <div className="w-full bg-surface-container-low border-b border-outline-variant/40 overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={blog.banner_image}
@@ -202,7 +202,7 @@ export default function BlogDetailPage() {
               </div>
             )}
 
-            {/* 2. Post Header Block (Inside white sheet, connecting directly with body) */}
+            {/* 2. Post Header Block (Inside document sheet, connecting directly with body) */}
             <header className="p-6 sm:p-10 lg:p-12 pb-6 space-y-6">
 
               {/* Post Title */}
@@ -223,7 +223,7 @@ export default function BlogDetailPage() {
                   {blog.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="px-3 py-1 rounded-md text-xs font-medium bg-[#f6f0e8] text-secondary border border-outline-variant/40"
+                      className="px-3 py-1 rounded-md text-xs font-medium bg-surface-container-low text-secondary border border-outline-variant/40"
                     >
                       {tag}
                     </span>
@@ -314,7 +314,7 @@ export default function BlogDetailPage() {
             </header>
 
             {/* Subtle Divider Connecting Header and Body Directly */}
-            <div className="border-t border-[#e4ddd2]/80" />
+            <div className="border-t border-outline-variant/40" />
 
             {/* 3. Post Body (No gap, no rounded corners, flows seamlessly in the white document) */}
             <article className="p-6 sm:p-10 lg:p-12 pt-8">
@@ -322,7 +322,7 @@ export default function BlogDetailPage() {
             </article>
 
             {/* 4. Bottom Interactive Action Bar */}
-            <div className="px-6 sm:px-10 lg:px-12 py-3.5 border-t border-[#e4ddd2]/80 text-on-surface-variant text-xs flex items-center justify-between">
+            <div className="px-6 sm:px-10 lg:px-12 py-3.5 border-t border-outline-variant/40 text-on-surface-variant text-xs flex items-center justify-between">
               <div className="flex items-center gap-6">
                 <button
                   type="button"
@@ -353,7 +353,7 @@ export default function BlogDetailPage() {
             </div>
 
             {/* 5. Author Card / Editorial Footer within document */}
-            <div className="p-6 sm:p-10 lg:p-12 border-t border-[#e4ddd2]/60 bg-[#faf6f0]">
+            <div className="p-6 sm:p-10 lg:p-12 border-t border-outline-variant/40 bg-surface-container-low">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-sm ring-1 ring-primary/25 shrink-0">

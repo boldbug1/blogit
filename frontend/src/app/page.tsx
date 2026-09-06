@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { LandingPage } from "@/components/LandingPage";
 import { useAuth } from "@/context/AuthContext";
 import {
   api,
@@ -477,6 +478,23 @@ function FeedContent() {
   }
 
 export default function HomePage() {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background text-on-surface">
+        <Navbar />
+        <main className="w-full pt-28 pb-20 flex-1 flex items-center justify-center">
+          <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
+        </main>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LandingPage />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-on-surface">
       <Navbar />
@@ -489,3 +507,4 @@ export default function HomePage() {
     </div>
   );
 }
+

@@ -133,7 +133,7 @@ export function CommentsDrawer({
           {user ? (
             <form
               onSubmit={handleSubmitComment}
-              className="p-4 rounded-lg bg-white/90 border border-outline-variant/30 shadow-xs space-y-3"
+              className="p-4 rounded-lg bg-surface border border-outline-variant/30 shadow-xs space-y-3"
             >
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">
@@ -166,7 +166,7 @@ export function CommentsDrawer({
               </div>
             </form>
           ) : (
-            <div className="p-4 rounded-lg bg-white/70 border border-outline-variant/30 text-center space-y-2">
+            <div className="p-4 rounded-lg bg-surface-container-low border border-outline-variant/30 text-center space-y-2">
               <p className="text-xs text-on-surface-variant">
                 Sign in to join the conversation and reply to responses.
               </p>
@@ -191,7 +191,7 @@ export function CommentsDrawer({
               {topLevel.map((comment) => (
                 <div
                   key={comment.id}
-                  className="p-4 rounded-lg bg-white/80 border border-outline-variant/30 shadow-xs space-y-3"
+                  className="p-4 rounded-lg bg-surface border border-outline-variant/30 shadow-xs space-y-3"
                 >
                   {/* Author Header */}
                   <div className="flex items-center justify-between">

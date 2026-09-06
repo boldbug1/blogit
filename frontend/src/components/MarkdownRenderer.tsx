@@ -137,13 +137,13 @@ export function MarkdownRenderer({
               return <div className="mb-6 leading-relaxed">{children}</div>;
             }
             return (
-              <p className="font-body text-[18px] sm:text-[19px] text-[#2c2420] leading-[1.82] mb-6 tracking-normal">
+              <p className="font-body text-[18px] sm:text-[19px] text-on-surface leading-[1.82] mb-6 tracking-normal">
                 {children}
               </p>
             );
           },
           blockquote: ({ children }) => (
-            <blockquote className="my-8 p-6 sm:p-7 bg-[#f6eee3]/80 border-l-4 border-primary rounded-none italic font-headline text-xl sm:text-2xl text-on-surface shadow-xs leading-relaxed">
+            <blockquote className="my-8 p-6 sm:p-7 bg-surface-container-low border-l-4 border-primary rounded-none italic font-headline text-xl sm:text-2xl text-on-surface shadow-xs leading-relaxed">
               {children}
             </blockquote>
           ),
@@ -208,7 +208,7 @@ export function MarkdownRenderer({
               {children}
             </ol>
           ),
-          li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+          li: ({ children }) => <li className="leading-relaxed text-on-surface">{children}</li>,
           hr: () => <hr className="my-8 border-t border-outline-variant/40" />,
           table: ({ children }) => (
             <div className="my-8 overflow-x-auto rounded-none border border-outline-variant/40 shadow-xs">
@@ -218,7 +218,7 @@ export function MarkdownRenderer({
             </div>
           ),
           thead: ({ children }) => (
-            <thead className="bg-[#f5ede3] border-b-2 border-outline-variant/40">
+            <thead className="bg-surface-container-low border-b-2 border-outline-variant/40">
               {children}
             </thead>
           ),

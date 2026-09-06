@@ -80,7 +80,7 @@ function SearchInput() {
         value={searchQuery}
         onChange={(e) => updateSearch(e.target.value)}
         placeholder="Search stories..."
-        className="w-full pl-8 sm:pl-9 pr-7 py-1.5 text-xs sm:text-sm bg-white/70 hover:bg-white focus:bg-white border border-outline-variant/40 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all text-on-surface placeholder:text-on-surface-variant/50 shadow-2xs"
+        className="w-full pl-8 sm:pl-9 pr-7 py-1.5 text-xs sm:text-sm bg-surface-container-low hover:bg-surface-container focus:bg-surface border border-outline-variant/40 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all text-on-surface placeholder:text-on-surface-variant/50 shadow-2xs"
       />
       {searchQuery && (
         <button
@@ -142,20 +142,22 @@ export function Navbar() {
 
           {/* Right: Theme Toggle, Write Button and User Profile / Auth */}
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            {/* Dark / Light Mode Toggle */}
-            <button
-              type="button"
-              onClick={toggleMode}
-              className="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-              aria-label="Toggle dark mode"
-              title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {mode === "dark" ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
-                <Moon className="w-4 h-4 text-secondary" />
-              )}
-            </button>
+            {/* Dark / Light Mode Toggle: Signed-in users only */}
+            {user && (
+              <button
+                type="button"
+                onClick={toggleMode}
+                className="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                aria-label="Toggle dark mode"
+                title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {mode === "dark" ? (
+                  <Sun className="w-4 h-4 text-secondary hover:text-on-surface" />
+                ) : (
+                  <Moon className="w-4 h-4 text-secondary hover:text-on-surface" />
+                )}
+              </button>
+            )}
 
             {/* Write Button */}
             <Link
@@ -345,7 +347,7 @@ export function Navbar() {
                       key={topic}
                       href={`/?tag=${encodeURIComponent(topic)}`}
                       onClick={() => setSidebarOpen(false)}
-                      className="px-2.5 py-1 rounded-md text-xs bg-white/70 hover:bg-primary/10 hover:text-primary border border-outline-variant/30 text-on-surface-variant transition-colors"
+                      className="px-2.5 py-1 rounded-md text-xs bg-surface-container-low hover:bg-surface-container hover:text-primary border border-outline-variant/30 text-on-surface-variant transition-colors"
                     >
                       {topic}
                     </Link>
@@ -354,24 +356,26 @@ export function Navbar() {
               </div>
             </div>
 
-            {/* Theme Mode row inside drawer */}
-            <div className="py-3 border-t border-outline-variant/30 flex items-center justify-between">
-              <span className="text-xs font-medium text-on-surface flex items-center gap-2">
-                {mode === "dark" ? (
-                  <Moon className="w-4 h-4 text-primary" />
-                ) : (
-                  <Sun className="w-4 h-4 text-amber-500" />
-                )}
-                <span>{mode === "dark" ? "Dark Mode" : "Light Mode"}</span>
-              </span>
-              <button
-                type="button"
-                onClick={toggleMode}
-                className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-surface-container-low border border-outline-variant/40 text-on-surface hover:text-primary transition-colors"
-              >
-                Switch to {mode === "dark" ? "Light" : "Dark"}
-              </button>
-            </div>
+            {/* Theme Mode row inside drawer: Signed-in users only */}
+            {user && (
+              <div className="py-3 border-t border-outline-variant/30 flex items-center justify-between">
+                <span className="text-xs font-medium text-on-surface flex items-center gap-2">
+                  {mode === "dark" ? (
+                    <Moon className="w-4 h-4 text-secondary" />
+                  ) : (
+                    <Sun className="w-4 h-4 text-secondary" />
+                  )}
+                  <span>{mode === "dark" ? "Dark Mode" : "Light Mode"}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={toggleMode}
+                  className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-surface-container-low border border-outline-variant/40 text-on-surface hover:text-primary transition-colors"
+                >
+                  Switch to {mode === "dark" ? "Light" : "Dark"}
+                </button>
+              </div>
+            )}
 
             {/* Bottom Account / Auth Block in Drawer */}
             <div className="pt-3 border-t border-outline-variant/30">

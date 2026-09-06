@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AuroraShader } from "@/components/AuroraShader";
 import { Logo } from "@/components/Logo";
 import { useAuth } from "@/context/AuthContext";
-import { useTheme } from "@/context/ThemeContext";
 import { api } from "@/lib/api";
 import {
   Eye,
@@ -14,8 +14,6 @@ import {
   AlertCircle,
   CheckCircle2,
   Loader2,
-  Sun,
-  Moon,
 } from "lucide-react";
 
 type StrengthLevel = "Weak" | "Medium" | "Fine" | "Strong";
@@ -89,7 +87,6 @@ function evaluatePasswordStrength(pass: string): PasswordStrength {
 export default function SignUpPage() {
   const router = useRouter();
   const { login, user, isLoading: isAuthLoading } = useAuth();
-  const { mode, toggleMode } = useTheme();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -186,27 +183,15 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden py-12 px-4 sm:px-6 bg-background text-on-surface transition-colors duration-200">
+    <div className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden py-12 px-4 sm:px-6">
+      <AuroraShader />
+
+      <div className="absolute -top-16 -left-12 w-64 h-64 bg-primary-fixed/40 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute -bottom-16 -right-12 w-72 h-72 bg-tertiary-fixed/30 rounded-full blur-3xl pointer-events-none -z-10" />
+
       {/* Top-left Brand Logo */}
       <div className="absolute top-6 left-6 sm:top-8 sm:left-10 z-20">
         <Logo size="lg" />
-      </div>
-
-      {/* Top-right Dark Mode Toggle */}
-      <div className="absolute top-6 right-6 sm:top-8 sm:right-10 z-20">
-        <button
-          type="button"
-          onClick={toggleMode}
-          className="p-2.5 rounded-lg text-on-surface-variant hover:text-on-surface bg-surface border border-outline-variant/40 shadow-xs hover:bg-surface-container-low transition-colors"
-          aria-label="Toggle dark mode"
-          title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-        >
-          {mode === "dark" ? (
-            <Sun className="w-4 h-4 text-amber-400" />
-          ) : (
-            <Moon className="w-4 h-4 text-secondary" />
-          )}
-        </button>
       </div>
 
       <div className="w-full max-w-md relative z-10">
@@ -221,7 +206,7 @@ export default function SignUpPage() {
         </div>
 
         {/* Card */}
-        <div className="w-full bg-surface border border-outline-variant/50 shadow-xl rounded-lg p-8 md:p-10 relative transition-colors duration-200">
+        <div className="w-full bg-surface/90 backdrop-blur-xl border border-primary/15 shadow-2xl shadow-primary/10 rounded-lg p-8 md:p-10 relative">
           {error && (
             <div className="mb-5 p-3.5 rounded-md bg-error/10 border border-error/20 flex items-center gap-2.5 text-xs text-error">
               <AlertCircle className="w-4 h-4 shrink-0" />
