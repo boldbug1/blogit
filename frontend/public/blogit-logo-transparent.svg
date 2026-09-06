@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <text
+    x="50%"
+    y="54%"
+    text-anchor="middle"
+    dominant-baseline="middle"
+    font-family="'EB Garamond', Garamond, 'Georgia', serif"
+    font-size="124"
+    font-weight="900"
+    letter-spacing="-0.04em"
+    fill="#161210"
+  >
+    blogit<tspan fill="#c2652a">.</tspan>
+  </text>
+</svg>

@@ -1,13 +1,29 @@
-# Blogit
+<div align="center">
+  <img src="frontend/public/blogit-logo.png" alt="blogit. logo" width="140" height="140" style="border-radius: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.08);" />
 
-A modern, full-stack blogging platform engineered for high performance, editorial elegance, and writer flow. Built with a fast, dependency-light **Go** backend and a refined **Next.js 16 (Turbopack)** frontend styled in the **Sahara Warm Minimalist** aesthetic.
+  # blogit.
 
-![Go](https://img.shields.io/badge/Go-1.25-00ADD8?style=for-the-badge&logo=go&logoColor=white)
-![Next.js](https://img.shields.io/badge/Next.js-16.3.4-black?style=for-the-badge&logo=next.js&logoColor=white)
-![React](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![sqlc](https://img.shields.io/badge/sqlc-type--safe_SQL-blue?style=for-the-badge)
+  <p align="center">
+    <strong>The modern, distraction-free publishing platform for writers and thinkers.</strong><br />
+    No algorithms, no invasive ads — just your words and your readers.
+  </p>
+
+  <p align="center">
+    <a href="#overview--highlights">Overview</a> •
+    <a href="#features">Features</a> •
+    <a href="#architecture--tech-stack">Tech Stack</a> •
+    <a href="#getting-started">Getting Started</a>
+  </p>
+
+  <p align="center">
+    <img src="https://img.shields.io/badge/Go-1.25-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go" />
+    <img src="https://img.shields.io/badge/Next.js-16.3.4-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
+    <img src="https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+    <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+    <img src="https://img.shields.io/badge/sqlc-type--safe_SQL-blue?style=for-the-badge" alt="sqlc" />
+  </p>
+</div>
 
 ---
 
