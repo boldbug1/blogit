@@ -71,7 +71,7 @@ export default function DashboardPage() {
 
   if (isAuthLoading || !user) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#faf5ee]">
+      <div className="min-h-screen flex flex-col bg-background text-on-surface">
         <Navbar />
         <main className="w-full flex-1">
           <DashboardSkeleton />
@@ -84,7 +84,7 @@ export default function DashboardPage() {
   const totalStories = blogs.length;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#faf5ee]">
+    <div className="min-h-screen flex flex-col bg-background text-on-surface">
       <Navbar />
 
       <main className="w-full pt-28 pb-24 flex-1">

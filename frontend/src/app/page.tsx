@@ -478,7 +478,7 @@ function FeedContent() {
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#faf5ee] text-on-surface">
+    <div className="min-h-screen flex flex-col bg-background text-on-surface">
       <Navbar />
       <main className="w-full pt-24 pb-20 flex-1">
         <Suspense fallback={null}>

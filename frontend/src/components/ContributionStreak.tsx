@@ -195,21 +195,21 @@ export function ContributionStreak({ blogs }: ContributionStreakProps) {
   // Color mapping based on activity level
   const getCellColor = (count: number, isFuture: boolean) => {
     if (isFuture) return "bg-transparent opacity-0 cursor-default";
-    if (count === 0) return "bg-[#eadecc]/60 hover:bg-[#e0d3c0] border border-outline-variant/20";
-    if (count === 1) return "bg-[#f6c4a3] hover:bg-[#f6b48f] border border-[#e69966]/30";
-    if (count === 2) return "bg-[#e69966] hover:bg-[#df8a54] border border-[#c2652a]/40";
-    return "bg-[#c2652a] hover:bg-[#b05721] border border-[#8e3f10]/40";
+    if (count === 0) return "bg-surface-container-high/60 hover:bg-surface-container-highest border border-outline-variant/20";
+    if (count === 1) return "bg-primary/25 hover:bg-primary/35 border border-primary/30";
+    if (count === 2) return "bg-primary/60 hover:bg-primary/70 border border-primary/50 text-white";
+    return "bg-primary hover:bg-primary/90 border border-primary/70";
   };
 
   return (
-    <div className="p-6 sm:p-7 rounded-lg bg-white/85 border border-outline-variant/40 shadow-sm space-y-6">
+    <div className="p-6 sm:p-7 rounded-lg bg-surface border border-outline-variant/40 shadow-sm space-y-6">
       {/* Header & Streak Telemetry */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-outline-variant/25">
         <div>
           <h2 className="font-headline text-2xl text-on-surface font-bold tracking-tight flex items-center gap-2">
             <span>Writing Activity &amp; Streaks</span>
             {currentStreak > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-primary-fixed text-on-primary-fixed animate-pulse">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-primary/15 text-primary border border-primary/25 animate-pulse">
                 <Flame className="w-3.5 h-3.5 text-primary" /> Active Streak
               </span>
             )}
@@ -295,7 +295,7 @@ export function ContributionStreak({ blogs }: ContributionStreakProps) {
                         day.isFuture
                       )} ${
                         day.isToday
-                          ? "ring-1 ring-primary ring-offset-1 ring-offset-white"
+                          ? "ring-1 ring-primary ring-offset-1 ring-offset-surface"
                           : ""
                       }`}
                     />
@@ -329,10 +329,10 @@ export function ContributionStreak({ blogs }: ContributionStreakProps) {
         {/* Legend */}
         <div className="flex items-center gap-1.5 text-[11px]">
           <span>Less</span>
-          <span className="w-2.5 h-2.5 rounded-[2px] bg-[#eadecc]/60 border border-outline-variant/20" />
-          <span className="w-2.5 h-2.5 rounded-[2px] bg-[#f6c4a3] border border-[#e69966]/30" />
-          <span className="w-2.5 h-2.5 rounded-[2px] bg-[#e69966] border border-[#c2652a]/40" />
-          <span className="w-2.5 h-2.5 rounded-[2px] bg-[#c2652a] border border-[#8e3f10]/40" />
+          <span className="w-2.5 h-2.5 rounded-[2px] bg-surface-container-high/60 border border-outline-variant/20" />
+          <span className="w-2.5 h-2.5 rounded-[2px] bg-primary/25 border border-primary/30" />
+          <span className="w-2.5 h-2.5 rounded-[2px] bg-primary/60 border border-primary/50" />
+          <span className="w-2.5 h-2.5 rounded-[2px] bg-primary border border-primary/70" />
           <span>More</span>
         </div>
       </div>

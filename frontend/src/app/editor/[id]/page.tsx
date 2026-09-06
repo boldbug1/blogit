@@ -179,16 +179,16 @@ export default function UpdatePostPage() {
 
   if (isAuthLoading || !user || isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#faf5ee]">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#faf5ee] text-on-surface">
+    <div className="min-h-screen flex flex-col bg-background text-on-surface">
       {/* Sticky Top Action Bar */}
-      <header className="sticky top-0 z-40 w-full bg-[#faf5ee]/95 backdrop-blur-md border-b border-outline-variant/30 shadow-sm">
+      <header className="sticky top-0 z-40 w-full bg-surface/90 backdrop-blur-md border-b border-outline-variant/30 shadow-xs">
         <div className="max-w-5xl mx-auto px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Link

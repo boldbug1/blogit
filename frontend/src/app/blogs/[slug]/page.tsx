@@ -110,7 +110,7 @@ export default function BlogDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#faf5ee]">
+      <div className="min-h-screen flex flex-col bg-background text-on-surface">
         <Navbar />
         <main className="w-full flex-1">
           <PostDetailSkeleton />
@@ -122,7 +122,7 @@ export default function BlogDetailPage() {
 
   if (!blog || error) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#faf5ee]">
+      <div className="min-h-screen flex flex-col bg-background text-on-surface">
         <Navbar />
         <main className="flex-1 flex flex-col items-center justify-center px-6 pt-32 pb-20 text-center max-w-md mx-auto">
           <h1 className="font-headline text-3xl sm:text-4xl font-bold text-on-surface mb-3">
@@ -150,14 +150,14 @@ export default function BlogDetailPage() {
   const dateStr = formatUtcDate(blog.created_at);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#faf5ee] relative text-on-surface">
+    <div className="min-h-screen flex flex-col bg-background relative text-on-surface">
       {/* Minimalist Reading Progress Bar */}
       <div
-        className="fixed top-0 left-0 w-full h-[2.5px] bg-[#d8d0c8]/25 z-[99] pointer-events-none"
+        className="fixed top-0 left-0 w-full h-[2.5px] bg-outline-variant/30 z-[99] pointer-events-none"
         aria-hidden="true"
       />
       <div
-        className="fixed top-0 left-0 h-[2.5px] bg-gradient-to-r from-[#e08850] via-[#c2652a] to-[#a34d1c] z-[100] transition-[width] duration-150 ease-out pointer-events-none shadow-[0_1px_6px_rgba(194,101,42,0.45)]"
+        className="fixed top-0 left-0 h-[2.5px] bg-primary z-[100] transition-[width] duration-150 ease-out pointer-events-none shadow-[0_1px_6px_rgba(0,0,0,0.15)]"
         style={{ width: `${readingProgress}%` }}
         role="progressbar"
         aria-valuenow={Math.round(readingProgress)}
@@ -165,7 +165,7 @@ export default function BlogDetailPage() {
         aria-valuemax={100}
       >
         {readingProgress > 0 && (
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_6px_#c2652a]" />
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
         )}
       </div>
 
