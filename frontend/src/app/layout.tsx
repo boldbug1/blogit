@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { EB_Garamond, Manrope } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const ebGaramond = EB_Garamond({
   variable: "--font-eb-garamond",
@@ -34,14 +35,16 @@ export default function RootLayout({
     >
       <body
         suppressHydrationWarning
-        className="min-h-screen flex flex-col bg-[#faf5ee] text-[#3a302a] relative selection:bg-primary/20 selection:text-primary"
+        className="min-h-screen flex flex-col bg-surface text-on-surface relative selection:bg-primary/20 selection:text-primary transition-colors duration-300"
       >
         {/* Tactile paper texture micro-grain overlay */}
         <div
           className="fixed inset-0 pointer-events-none -z-10 opacity-[0.045] mix-blend-multiply paper-grain"
           aria-hidden="true"
         />
-        <AuthProvider>{children}</AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

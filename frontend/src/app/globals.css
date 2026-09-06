@@ -53,18 +53,28 @@
   html, body {
     margin: 0;
     padding: 0;
-    background-color: #faf5ee;
-    color: #3a302a;
+    background-color: var(--color-background, #faf5ee);
+    color: var(--color-on-background, #3a302a);
     font-family: var(--font-manrope), sans-serif;
   }
   
+  /* Disable default browser password reveal eye (Edge / Chromium / WebKit) */
+  input::-ms-reveal,
+  input::-ms-clear,
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
   button, a, [role="button"] {
     cursor: pointer;
   }
 
   ::selection {
     background-color: rgba(194, 101, 42, 0.2);
-    color: #c2652a;
+    color: var(--color-primary, #c2652a);
   }
 }
 

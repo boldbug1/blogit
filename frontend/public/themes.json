@@ -1,0 +1,128 @@
+[
+  {
+    "id": "sahara",
+    "name": "Sahara Warm",
+    "description": "Signature terracotta, sun-baked linen cream, and espresso ink",
+    "mode": "light",
+    "colors": {
+      "primary": "#c2652a",
+      "primaryContainer": "#e08850",
+      "primaryFixed": "#fbe8d8",
+      "secondary": "#78706a",
+      "background": "#faf5ee",
+      "surface": "#faf5ee",
+      "surfaceCream": "#f4ede2",
+      "surfaceContainer": "#f2ece4",
+      "surfaceContainerLow": "#f6f0e8",
+      "onSurface": "#3a302a",
+      "onSurfaceVariant": "#605850",
+      "outlineVariant": "#d8d0c8",
+      "borderWarm": "#e3dacd"
+    }
+  },
+  {
+    "id": "emerald",
+    "name": "Forest Sage",
+    "description": "Pine forest green, organic sage tint, and dark moss ink",
+    "mode": "light",
+    "colors": {
+      "primary": "#2d6a4f",
+      "primaryContainer": "#52b788",
+      "primaryFixed": "#d8f3dc",
+      "secondary": "#556b2f",
+      "background": "#f4f7f4",
+      "surface": "#f4f7f4",
+      "surfaceCream": "#e9f0e8",
+      "surfaceContainer": "#e2ebe2",
+      "surfaceContainerLow": "#ebf2eb",
+      "onSurface": "#1b2d24",
+      "onSurfaceVariant": "#40584b",
+      "outlineVariant": "#cad7cd",
+      "borderWarm": "#b7cbb9"
+    }
+  },
+  {
+    "id": "nordic",
+    "name": "Nordic Frost",
+    "description": "Scandinavian fjord blue, arctic white snow, and deep slate",
+    "mode": "light",
+    "colors": {
+      "primary": "#2b5b84",
+      "primaryContainer": "#4d82b0",
+      "primaryFixed": "#dbeafe",
+      "secondary": "#64748b",
+      "background": "#f8fafc",
+      "surface": "#f8fafc",
+      "surfaceCream": "#f1f5f9",
+      "surfaceContainer": "#e2e8f0",
+      "surfaceContainerLow": "#edf2f7",
+      "onSurface": "#0f172a",
+      "onSurfaceVariant": "#475569",
+      "outlineVariant": "#cbd5e1",
+      "borderWarm": "#cbd5e1"
+    }
+  },
+  {
+    "id": "obsidian",
+    "name": "Obsidian & Gold",
+    "description": "Deep midnight obsidian, glowing amber gold, and clean silver text",
+    "mode": "dark",
+    "colors": {
+      "primary": "#f59e0b",
+      "primaryContainer": "#d97706",
+      "primaryFixed": "#78350f",
+      "secondary": "#94a3b8",
+      "background": "#0f141c",
+      "surface": "#161d27",
+      "surfaceCream": "#1c2430",
+      "surfaceContainer": "#222c3b",
+      "surfaceContainerLow": "#1a222e",
+      "onSurface": "#f1f5f9",
+      "onSurfaceVariant": "#94a3b8",
+      "outlineVariant": "#2e3b4e",
+      "borderWarm": "#334155"
+    }
+  },
+  {
+    "id": "vintage-rose",
+    "name": "Vintage Rose",
+    "description": "Literary wine & rosewood, warm rose blush paper, and deep mulberry",
+    "mode": "light",
+    "colors": {
+      "primary": "#9f1239",
+      "primaryContainer": "#e11d48",
+      "primaryFixed": "#ffe4e6",
+      "secondary": "#881337",
+      "background": "#fff1f2",
+      "surface": "#fff1f2",
+      "surfaceCream": "#fde2e4",
+      "surfaceContainer": "#fbcfe8",
+      "surfaceContainerLow": "#fff5f5",
+      "onSurface": "#4c0519",
+      "onSurfaceVariant": "#831843",
+      "outlineVariant": "#f43f5e",
+      "borderWarm": "#fecdd3"
+    }
+  },
+  {
+    "id": "cyber-neon",
+    "name": "Cyber Violet",
+    "description": "Electric violet, dark cyber canvas, and radiant cyan accents",
+    "mode": "dark",
+    "colors": {
+      "primary": "#8b5cf6",
+      "primaryContainer": "#a78bfa",
+      "primaryFixed": "#4c1d95",
+      "secondary": "#06b6d4",
+      "background": "#090d16",
+      "surface": "#0f172a",
+      "surfaceCream": "#1e293b",
+      "surfaceContainer": "#1e293b",
+      "surfaceContainerLow": "#131d31",
+      "onSurface": "#f8fafc",
+      "onSurfaceVariant": "#94a3b8",
+      "outlineVariant": "#334155",
+      "borderWarm": "#334155"
+    }
+  }
+]
