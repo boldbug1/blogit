@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import defaultThemesData from "@/data/themes.json";
 
+export type ColorMode = "light" | "dark";
+
 export interface ThemeColors {
   primary: string;
   primaryContainer?: string;
@@ -23,7 +25,7 @@ export interface Theme {
   id: string;
   name: string;
   description: string;
-  mode?: "light" | "dark";
+  mode?: ColorMode;
   colors: ThemeColors;
   isCustom?: boolean;
 }
@@ -32,7 +34,10 @@ interface ThemeContextType {
   themes: Theme[];
   activeTheme: Theme;
   activeThemeId: string;
+  mode: ColorMode;
   setTheme: (id: string) => void;
+  setMode: (mode: ColorMode) => void;
+  toggleMode: () => void;
   saveCustomTheme: (theme: Theme) => void;
   deleteCustomTheme: (id: string) => void;
   resetThemes: () => void;
@@ -42,11 +47,18 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function applyThemeToDOM(theme: Theme) {
+export function applyThemeToDOM(theme: Theme, mode: ColorMode) {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
 
-  // Primary palette
+  // Toggle .dark class on <html>
+  if (mode === "dark") {
+    root.classList.add("dark");
+  } else {
+    root.classList.remove("dark");
+  }
+
+  // Primary palette (dynamic from active theme)
   root.style.setProperty("--color-primary", theme.colors.primary);
   root.style.setProperty(
     "--color-primary-container",
@@ -60,70 +72,87 @@ export function applyThemeToDOM(theme: Theme) {
   // Secondary
   root.style.setProperty("--color-secondary", theme.colors.secondary);
 
-  // Surfaces & Backgrounds
-  const bg = theme.colors.background || theme.colors.surface;
-  root.style.setProperty("--color-background", bg);
-  root.style.setProperty("--color-surface", theme.colors.surface);
-  root.style.setProperty(
-    "--color-surface-dim",
-    theme.colors.surfaceContainer || theme.colors.surface
-  );
-  root.style.setProperty("--color-surface-bright", theme.colors.surface);
-  root.style.setProperty(
-    "--color-surface-variant",
-    theme.colors.surfaceContainerLow || theme.colors.surface
-  );
-  root.style.setProperty(
-    "--color-surface-cream",
-    theme.colors.surfaceCream || theme.colors.surface
-  );
-  root.style.setProperty(
-    "--color-surface-container",
-    theme.colors.surfaceContainer || theme.colors.surface
-  );
-  root.style.setProperty(
-    "--color-surface-container-low",
-    theme.colors.surfaceContainerLow || theme.colors.surface
-  );
-  root.style.setProperty(
-    "--color-surface-container-high",
-    theme.colors.surfaceContainer || theme.colors.surface
-  );
-  root.style.setProperty(
-    "--color-surface-container-highest",
-    theme.colors.surfaceContainer || theme.colors.surface
-  );
+  if (mode === "dark") {
+    // Dark mode palette
+    const bg = theme.isCustom && theme.mode === "dark" && theme.colors.background
+      ? theme.colors.background
+      : "#090d16";
+    const surface = theme.isCustom && theme.mode === "dark" && theme.colors.surface
+      ? theme.colors.surface
+      : "#0f172a";
+    const surfaceContainer = "#1e293b";
+    const surfaceContainerLow = "#131d31";
+    const onSurface = "#f8fafc";
+    const onSurfaceVariant = "#94a3b8";
+    const outlineVariant = "#273549";
 
-  // Text / Typography colors
-  root.style.setProperty("--color-on-background", theme.colors.onSurface);
-  root.style.setProperty("--color-on-surface", theme.colors.onSurface);
-  root.style.setProperty(
-    "--color-on-surface-variant",
-    theme.colors.onSurfaceVariant
-  );
+    root.style.setProperty("--color-background", bg);
+    root.style.setProperty("--color-surface", surface);
+    root.style.setProperty("--color-surface-dim", surfaceContainerLow);
+    root.style.setProperty("--color-surface-bright", surface);
+    root.style.setProperty("--color-surface-variant", surfaceContainer);
+    root.style.setProperty("--color-surface-cream", surfaceContainerLow);
+    root.style.setProperty("--color-surface-container", surfaceContainer);
+    root.style.setProperty("--color-surface-container-low", surfaceContainerLow);
+    root.style.setProperty("--color-surface-container-high", "#28374d");
+    root.style.setProperty("--color-surface-container-highest", "#33445e");
+    root.style.setProperty("--color-surface-container-lowest", "#090d16");
 
-  // Borders and Outlines
-  root.style.setProperty(
-    "--color-outline-variant",
-    theme.colors.outlineVariant
-  );
-  root.style.setProperty(
-    "--color-border-warm",
-    theme.colors.borderWarm || theme.colors.outlineVariant
-  );
+    root.style.setProperty("--color-on-background", onSurface);
+    root.style.setProperty("--color-on-surface", onSurface);
+    root.style.setProperty("--color-on-surface-variant", onSurfaceVariant);
+
+    root.style.setProperty("--color-outline", "#475569");
+    root.style.setProperty("--color-outline-variant", outlineVariant);
+    root.style.setProperty("--color-border-warm", outlineVariant);
+  } else {
+    // Light mode palette: crisp pure WHITE background
+    const bg = theme.isCustom && theme.mode === "light" && theme.colors.background
+      ? theme.colors.background
+      : "#ffffff";
+    const surface = theme.isCustom && theme.mode === "light" && theme.colors.surface
+      ? theme.colors.surface
+      : "#ffffff";
+    const surfaceContainer = "#f1f5f9";
+    const surfaceContainerLow = "#f8fafc";
+    const onSurface = "#0f172a";
+    const onSurfaceVariant = "#64748b";
+    const outlineVariant = "#e2e8f0";
+
+    root.style.setProperty("--color-background", bg);
+    root.style.setProperty("--color-surface", surface);
+    root.style.setProperty("--color-surface-dim", surfaceContainerLow);
+    root.style.setProperty("--color-surface-bright", surface);
+    root.style.setProperty("--color-surface-variant", surfaceContainer);
+    root.style.setProperty("--color-surface-cream", surfaceContainerLow);
+    root.style.setProperty("--color-surface-container", surfaceContainer);
+    root.style.setProperty("--color-surface-container-low", surfaceContainerLow);
+    root.style.setProperty("--color-surface-container-high", "#e2e8f0");
+    root.style.setProperty("--color-surface-container-highest", "#cbd5e1");
+    root.style.setProperty("--color-surface-container-lowest", "#ffffff");
+
+    root.style.setProperty("--color-on-background", onSurface);
+    root.style.setProperty("--color-on-surface", onSurface);
+    root.style.setProperty("--color-on-surface-variant", onSurfaceVariant);
+
+    root.style.setProperty("--color-outline", "#94a3b8");
+    root.style.setProperty("--color-outline-variant", outlineVariant);
+    root.style.setProperty("--color-border-warm", outlineVariant);
+  }
 
   // Attributes for CSS targeting
   root.setAttribute("data-theme", theme.id);
-  root.setAttribute("data-mode", theme.mode || "light");
+  root.setAttribute("data-mode", mode);
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [themes, setThemes] = useState<Theme[]>(
     defaultThemesData as Theme[]
   );
-  const [activeThemeId, setActiveThemeId] = useState<string>("sahara");
+  const [activeThemeId, setActiveThemeId] = useState<string>("indigo");
+  const [mode, setModeState] = useState<ColorMode>("light");
 
-  // Load custom themes and active theme from localStorage on client mount
+  // Load custom themes, active theme, and mode from localStorage on client mount
   useEffect(() => {
     try {
       const storedCustom = localStorage.getItem("blogit_custom_themes");
@@ -131,7 +160,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (storedCustom) {
         const parsed = JSON.parse(storedCustom);
         if (Array.isArray(parsed)) {
-          // Merge custom themes, avoiding duplicate IDs
           const customIds = new Set(parsed.map((t) => t.id));
           allThemes = [
             ...allThemes.filter((t) => !customIds.has(t.id)),
@@ -145,13 +173,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const targetId =
         savedThemeId && allThemes.some((t) => t.id === savedThemeId)
           ? savedThemeId
-          : "sahara";
+          : "indigo";
+
+      const savedMode = localStorage.getItem("blogit_mode") as ColorMode | null;
+      const targetMode = savedMode === "dark" ? "dark" : "light";
 
       setActiveThemeId(targetId);
+      setModeState(targetMode);
+
       const active =
         allThemes.find((t) => t.id === targetId) || allThemes[0];
       if (active) {
-        applyThemeToDOM(active);
+        applyThemeToDOM(active, targetMode);
       }
     } catch (e) {
       console.error("Failed to initialize themes:", e);
@@ -169,7 +202,28 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     setActiveThemeId(id);
     localStorage.setItem("blogit_active_theme", id);
-    applyThemeToDOM(target);
+
+    // If theme has explicit mode, honor it if switching
+    let newMode = mode;
+    if (target.mode && target.mode !== mode && !localStorage.getItem("blogit_user_overrode_mode")) {
+      newMode = target.mode;
+      setModeState(newMode);
+      localStorage.setItem("blogit_mode", newMode);
+    }
+
+    applyThemeToDOM(target, newMode);
+  };
+
+  const setMode = (newMode: ColorMode) => {
+    setModeState(newMode);
+    localStorage.setItem("blogit_mode", newMode);
+    localStorage.setItem("blogit_user_overrode_mode", "true");
+    applyThemeToDOM(activeTheme, newMode);
+  };
+
+  const toggleMode = () => {
+    const nextMode: ColorMode = mode === "light" ? "dark" : "light";
+    setMode(nextMode);
   };
 
   const saveCustomTheme = (newTheme: Theme) => {
@@ -185,7 +239,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const filtered = prev.filter((t) => t.id !== themeToSave.id);
       const updated = [...filtered, themeToSave];
 
-      // Save custom ones to localStorage
       const customOnly = updated.filter((t) => t.isCustom);
       localStorage.setItem("blogit_custom_themes", JSON.stringify(customOnly));
 
@@ -194,7 +247,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     setActiveThemeId(themeToSave.id);
     localStorage.setItem("blogit_active_theme", themeToSave.id);
-    applyThemeToDOM(themeToSave);
+    const newMode = themeToSave.mode || mode;
+    setModeState(newMode);
+    localStorage.setItem("blogit_mode", newMode);
+    applyThemeToDOM(themeToSave, newMode);
   };
 
   const deleteCustomTheme = (id: string) => {
@@ -206,15 +262,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (activeThemeId === id) {
-      setTheme("sahara");
+      setTheme("indigo");
     }
   };
 
   const resetThemes = () => {
     localStorage.removeItem("blogit_custom_themes");
+    localStorage.removeItem("blogit_active_theme");
+    localStorage.removeItem("blogit_mode");
+    localStorage.removeItem("blogit_user_overrode_mode");
     const defaults = defaultThemesData as Theme[];
     setThemes(defaults);
-    setTheme("sahara");
+    setActiveThemeId("indigo");
+    setModeState("light");
+    applyThemeToDOM(defaults[0], "light");
   };
 
   const exportThemesJSON = () => {
@@ -226,14 +287,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const parsed = JSON.parse(jsonStr);
       if (!Array.isArray(parsed) || parsed.length === 0) return false;
 
-      // Validate basic properties
       for (const item of parsed) {
-        if (!item.id || !item.name || !item.colors?.primary || !item.colors?.surface) {
+        if (!item.id || !item.name || !item.colors?.primary) {
           return false;
         }
       }
 
-      // Mark imported ones that aren't defaults as custom
       const defaultIds = new Set((defaultThemesData as Theme[]).map((t) => t.id));
       const normalized: Theme[] = parsed.map((item) => ({
         ...item,
@@ -259,7 +318,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         themes,
         activeTheme,
         activeThemeId,
+        mode,
         setTheme,
+        setMode,
+        toggleMode,
         saveCustomTheme,
         deleteCustomTheme,
         resetThemes,
