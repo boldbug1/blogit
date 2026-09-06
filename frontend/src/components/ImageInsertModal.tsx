@@ -142,13 +142,13 @@ export function ImageInsertModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="w-full max-w-lg bg-surface-container-lowest rounded-2xl shadow-2xl border border-outline-variant/30 overflow-hidden text-on-surface"
+        className="w-full max-w-lg bg-surface-container-lowest rounded-lg shadow-2xl border border-outline-variant/30 overflow-hidden text-on-surface"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-outline-variant/20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <div className="w-8 h-8 rounded-md bg-primary/10 text-primary flex items-center justify-center">
               <ImageIcon className="w-4 h-4" />
             </div>
             <h3 className="font-headline text-lg font-bold text-on-surface">
@@ -167,14 +167,14 @@ export function ImageInsertModal({
 
         {/* Tab Switcher */}
         <div className="px-6 pt-4">
-          <div className="flex rounded-xl bg-surface-container p-1 text-xs">
+          <div className="flex rounded-md bg-surface-container p-1 text-xs">
             <button
               type="button"
               onClick={() => {
                 setTab("upload");
                 setError(null);
               }}
-              className={`flex-1 py-2 rounded-lg font-medium flex items-center justify-center gap-1.5 transition-all ${
+              className={`flex-1 py-2 rounded-sm font-medium flex items-center justify-center gap-1.5 transition-all ${
                 tab === "upload"
                   ? "bg-white shadow-sm text-on-surface font-semibold"
                   : "text-on-surface-variant hover:text-on-surface"
@@ -183,14 +183,13 @@ export function ImageInsertModal({
               <Upload className="w-3.5 h-3.5" />
               <span>Upload File</span>
             </button>
-
             <button
               type="button"
               onClick={() => {
                 setTab("url");
                 setError(null);
               }}
-              className={`flex-1 py-2 rounded-lg font-medium flex items-center justify-center gap-1.5 transition-all ${
+              className={`flex-1 py-2 rounded-sm font-medium flex items-center justify-center gap-1.5 transition-all ${
                 tab === "url"
                   ? "bg-white shadow-sm text-on-surface font-semibold"
                   : "text-on-surface-variant hover:text-on-surface"
@@ -205,7 +204,7 @@ export function ImageInsertModal({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
-            <div className="p-3 rounded-xl bg-error/10 border border-error/20 flex items-center gap-2 text-xs text-error">
+            <div className="p-3 rounded-md bg-error/10 border border-error/20 flex items-center gap-2 text-xs text-error">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -226,7 +225,7 @@ export function ImageInsertModal({
               />
 
               {uploadedDataUrl ? (
-                <div className="relative rounded-xl overflow-hidden border border-outline-variant/30 bg-surface-container-low max-h-56 group flex items-center justify-center">
+                <div className="relative rounded-md overflow-hidden border border-outline-variant/30 bg-surface-container-low max-h-56 group flex items-center justify-center">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={uploadedDataUrl}
@@ -259,13 +258,13 @@ export function ImageInsertModal({
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onClick={() => fileInputRef.current?.click()}
-                  className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
+                  className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all ${
                     isDragging
                       ? "border-primary bg-primary/5 scale-[0.99]"
                       : "border-outline-variant/40 hover:border-primary/50 hover:bg-surface-container-low"
                   }`}
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
                     <Upload className="w-6 h-6" />
                   </div>
                   <p className="font-semibold text-sm text-on-surface">
@@ -288,17 +287,17 @@ export function ImageInsertModal({
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
                   placeholder="https://example.com/photo.jpg"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant/40 bg-surface-container-low text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  className="w-full px-3.5 py-2.5 rounded-md border border-outline-variant/40 bg-surface-container-low text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                 />
               </div>
 
               {imageUrl && (
-                <div className="rounded-xl overflow-hidden border border-outline-variant/30 bg-surface-container-low max-h-44 flex items-center justify-center p-2">
+                <div className="rounded-lg overflow-hidden border border-outline-variant/30 bg-surface-container-low max-h-44 flex items-center justify-center p-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={imageUrl}
                     alt="Preview"
-                    className="max-h-40 w-auto object-contain rounded-lg"
+                    className="max-h-40 w-auto object-contain rounded-md"
                     onError={() =>
                       setError("Could not load image from the provided URL.")
                     }
@@ -317,7 +316,7 @@ export function ImageInsertModal({
               value={altText}
               onChange={(e) => setAltText(e.target.value)}
               placeholder="e.g. Sunset over the Sahara dunes"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-outline-variant/40 bg-surface-container-low text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              className="w-full px-3.5 py-2.5 rounded-md border border-outline-variant/40 bg-surface-container-low text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
             />
           </div>
 
