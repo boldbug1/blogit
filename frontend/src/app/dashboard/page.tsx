@@ -303,7 +303,8 @@ export default function DashboardPage() {
                 {blogs.map((blog, idx) => {
                   const uniqueKey = blog.id ? String(blog.id) : (blog.slug || `story-${idx}`);
                   const dateStr = formatUtcDate(blog.created_at);
-                  const coverImage = blog.body ? extractCoverImage(blog.body) : null;
+                  const coverImage =
+                    blog.banner_image || (blog.body ? extractCoverImage(blog.body) : null);
                   const excerpt = blog.body ? extractExcerpt(blog.body, 140) : "";
                   const wordCount = blog.body ? blog.body.trim().split(/\s+/).length : 0;
                   const readTime = Math.max(1, Math.ceil(wordCount / 200));
@@ -317,7 +318,7 @@ export default function DashboardPage() {
                         {coverImage && (
                           <Link
                             href={`/blogs/${blog.slug}`}
-                            className="w-full sm:w-40 h-28 rounded-md overflow-hidden shrink-0 border border-outline-variant/30 bg-surface-container-low block group/img shadow-2xs"
+                            className="w-full sm:w-44 aspect-[16/9] rounded-md overflow-hidden shrink-0 border border-outline-variant/30 bg-surface-container-low block group/img shadow-2xs"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img

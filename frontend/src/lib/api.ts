@@ -298,6 +298,42 @@ export const api = {
     },
   },
 
+  media: {
+    upload: async (
+      file: Blob | File,
+      filename = "banner.jpg"
+    ): Promise<{ url: string; id: string }> => {
+      const baseUrl = getBaseUrl();
+      const formData = new FormData();
+      formData.append("file", file, filename);
+
+      const token = getToken();
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      const res = await fetch(`${baseUrl}/media/upload`, {
+        method: "POST",
+        headers,
+        body: formData,
+      });
+
+      if (!res.ok) {
+        let errorMsg = `Upload failed with status ${res.status}`;
+        try {
+          const errJson = await res.json();
+          if (errJson.error) errorMsg = errJson.error;
+        } catch {
+          // fallback
+        }
+        throw new Error(errorMsg);
+      }
+
+      return res.json() as Promise<{ url: string; id: string }>;
+    },
+  },
+
   health: () => request<{ status: string; uptime: string }>("/health"),
 };
 

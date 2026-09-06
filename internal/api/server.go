@@ -49,8 +49,12 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("GET /blogs/{id}/likes", s.readLimiter.Middleware(s.handleGetLikes))
 	mux.HandleFunc("GET /blogs/{id}/comments", s.readLimiter.Middleware(s.handleListComments))
 
+	// Public media serving (cached & rate limited)
+	mux.HandleFunc("GET /media/{id}", s.readLimiter.Middleware(s.handleGetMedia))
+
 	// Protected, requires Bearer JWT
 	mux.HandleFunc("GET /me", s.RequireAuth(s.handleMe))
+	mux.HandleFunc("POST /media/upload", s.RequireAuth(s.writeLimiter.Middleware(s.handleUploadMedia)))
 	mux.HandleFunc("POST /blogs", s.RequireAuth(s.writeLimiter.Middleware(s.handleCreateBlog)))
 	mux.HandleFunc("PATCH /blogs/{id}", s.RequireAuth(s.writeLimiter.Middleware(s.handleUpdateBlog)))
 	mux.HandleFunc("DELETE /blogs/{id}", s.RequireAuth(s.writeLimiter.Middleware(s.handleDeleteBlog)))

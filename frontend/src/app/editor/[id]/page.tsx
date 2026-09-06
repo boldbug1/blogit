@@ -305,9 +305,9 @@ export default function UpdatePostPage() {
           )}
         </div>
 
-        {/* Cover Banner Section (Sharp & Connected, Medium style) */}
+        {/* Cover Banner Section (Fixed 16:9 Standard Format) */}
         {bannerImage ? (
-          <div className="relative group w-full h-52 sm:h-72 rounded-lg overflow-hidden mb-6 border border-outline-variant/30 bg-surface-container-low shadow-xs">
+          <div className="relative group w-full aspect-[16/9] max-h-[460px] rounded-lg overflow-hidden mb-6 border border-outline-variant/30 bg-surface-container-low shadow-xs">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={bannerImage}
@@ -455,6 +455,8 @@ export default function UpdatePostPage() {
       {/* Banner Upload / URL Modal */}
       <ImageInsertModal
         isOpen={isBannerModalOpen}
+        aspectRatio="16:9"
+        title="Cover Banner Image"
         onClose={() => setIsBannerModalOpen(false)}
         onInsert={(url) => {
           setBannerImage(url);

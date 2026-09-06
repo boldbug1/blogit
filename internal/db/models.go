@@ -47,6 +47,15 @@ type BlogLike struct {
 	CreatedAt pgtype.Timestamptz
 }
 
+type MediaUpload struct {
+	ID          pgtype.UUID
+	Filename    string
+	ContentType string
+	ByteSize    int32
+	Data        []byte
+	CreatedAt   pgtype.Timestamptz
+}
+
 type NewsletterSubscriber struct {
 	ID        pgtype.UUID
 	Email     string

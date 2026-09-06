@@ -222,14 +222,15 @@ export default function BlogDetailClient({ slug }: BlogDetailClientProps) {
 
           {/* Unified Story Document Canvas */}
           <div className="bg-surface border border-outline-variant/40 shadow-xs rounded-lg overflow-hidden">
-            {/* 1. Cover Banner */}
+            {/* 1. Cover Banner (Fixed 16:9 Standard Format) */}
             {blog.banner_image && (
-              <div className="w-full bg-surface-container-low border-b border-outline-variant/40 overflow-hidden">
+              <div className="w-full aspect-[16/9] bg-surface-container-low border-b border-outline-variant/40 overflow-hidden relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={blog.banner_image}
                   alt={blog.title}
-                  className="w-full h-auto max-h-[540px] object-contain block mx-auto"
+                  className="w-full h-full object-cover block"
+                  loading="eager"
                 />
               </div>
             )}

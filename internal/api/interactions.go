@@ -90,6 +90,9 @@ func (s *Server) handleGetLikes(w http.ResponseWriter, r *http.Request) {
 			AuthorID: authorID,
 		})
 		liked = (err == nil)
+		w.Header().Set("Cache-Control", "private, max-age=10")
+	} else {
+		w.Header().Set("Cache-Control", "public, max-age=15, stale-while-revalidate=60")
 	}
 
 	writeJSON(w, http.StatusOK, LikeResponse{
@@ -115,6 +118,7 @@ func (s *Server) handleListComments(w http.ResponseWriter, r *http.Request) {
 	if comments == nil {
 		comments = []db.ListCommentsByBlogIdRow{}
 	}
+	w.Header().Set("Cache-Control", "public, max-age=15, stale-while-revalidate=60")
 	writeJSON(w, http.StatusOK, comments)
 }
 

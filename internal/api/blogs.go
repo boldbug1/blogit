@@ -57,6 +57,7 @@ func (s *Server) handleListBlogs(w http.ResponseWriter, r *http.Request) {
 		if blogs == nil {
 			blogs = []db.ListBlogsByAuthorRow{}
 		}
+		w.Header().Set("Cache-Control", "public, max-age=30, stale-while-revalidate=120")
 		writeJSON(w, http.StatusOK, blogs)
 		return
 	}
@@ -76,6 +77,7 @@ func (s *Server) handleListBlogs(w http.ResponseWriter, r *http.Request) {
 		if blogs == nil {
 			blogs = []db.ListBlogsByTagRow{}
 		}
+		w.Header().Set("Cache-Control", "public, max-age=60, stale-while-revalidate=300")
 		writeJSON(w, http.StatusOK, blogs)
 		return
 	}
@@ -94,6 +96,7 @@ func (s *Server) handleListBlogs(w http.ResponseWriter, r *http.Request) {
 	if blogs == nil {
 		blogs = []db.ListBlogsRow{}
 	}
+	w.Header().Set("Cache-Control", "public, max-age=60, stale-while-revalidate=300")
 	writeJSON(w, http.StatusOK, blogs)
 }
 
@@ -106,6 +109,7 @@ func (s *Server) handleListTags(w http.ResponseWriter, r *http.Request) {
 	if tags == nil {
 		tags = []string{}
 	}
+	w.Header().Set("Cache-Control", "public, max-age=300, stale-while-revalidate=600")
 	writeJSON(w, http.StatusOK, tags)
 }
 
@@ -122,6 +126,7 @@ func (s *Server) handleGetBlog(w http.ResponseWriter, r *http.Request) {
 			var uuidVal pgtype.UUID
 			if scanErr := uuidVal.Scan(slug); scanErr == nil {
 				if idBlog, idErr := s.queries.GetBlogById(r.Context(), uuidVal); idErr == nil {
+					w.Header().Set("Cache-Control", "public, max-age=60, stale-while-revalidate=300")
 					writeJSON(w, http.StatusOK, idBlog)
 					return
 				}
@@ -133,6 +138,7 @@ func (s *Server) handleGetBlog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Cache-Control", "public, max-age=60, stale-while-revalidate=300")
 	writeJSON(w, http.StatusOK, blog)
 }
 

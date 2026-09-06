@@ -334,11 +334,11 @@ function FeedContent() {
                             </div>
                           </div>
 
-                          {/* Right Side: Thumbnail (Uncropped / Natural Aspect Ratio Container) */}
+                          {/* Right Side: Thumbnail (16:9 Aspect Ratio) */}
                           {thumbnail && (
                             <Link
                               href={`/blogs/${blog.slug}`}
-                              className="w-24 h-18 sm:w-36 sm:h-24 md:w-44 md:h-28 rounded-lg overflow-hidden shrink-0 border border-outline-variant/30 bg-surface-container-low block group/img shadow-xs hover:shadow-md transition-shadow"
+                              className="w-28 sm:w-36 md:w-44 aspect-[16/9] rounded-lg overflow-hidden shrink-0 border border-outline-variant/30 bg-surface-container-low block group/img shadow-xs hover:shadow-md transition-shadow"
                             >
                               {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img
