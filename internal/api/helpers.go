@@ -45,12 +45,10 @@ func readJSON(w http.ResponseWriter, r *http.Request, dst any) error {
 	return nil
 }
 
-// normalizeEmail trims and lowercases for consistent lookup.
 func normalizeEmail(email string) string {
   return strings.ToLower(strings.TrimSpace(email))
 }
 
-// validateEmail uses net/mail for format checking.
 func validateEmail(email string) error {
   email = normalizeEmail(email)
   if email == "" {
@@ -62,7 +60,6 @@ func validateEmail(email string) error {
   return nil
 }
 
-// validatePassword enforces your open-registration policy.
 func validatePassword(password string) error {
   if len(password) < 8 {
     return errors.New("password must be at least 8 characters")
@@ -70,7 +67,7 @@ func validatePassword(password string) error {
   return nil
 }
 
-// validateRegister centralizes checks so register handler stays thin.
+
 func validateRegister(name, email, password string) error {
   if strings.TrimSpace(name) == "" {
     return errors.New("name is required")
@@ -81,7 +78,6 @@ func validateRegister(name, email, password string) error {
   return validatePassword(password)
 }
 
-// isUniqueViolation reports Postgres 23505 for duplicate email to 409 mapping.
 func isUniqueViolation(err error) bool {
   var pgErr *pgconn.PgError
   if errors.As(err, &pgErr) {
@@ -90,7 +86,6 @@ func isUniqueViolation(err error) bool {
   return false
 }
 
-// newAuthorResponse maps db.Author to public JSON and never leaks password_hash.
 func newAuthorResponse(a db.Author) authorResponse {
   return authorResponse{
     ID:        a.ID.String(),

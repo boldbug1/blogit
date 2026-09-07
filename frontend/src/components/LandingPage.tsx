@@ -18,6 +18,11 @@ import {
   ChevronDown,
   Mail,
   CheckCircle2,
+  Check,
+  Code2,
+  Rss,
+  Activity,
+  Radio,
 } from "lucide-react";
 import { api } from "@/lib/api";
 
@@ -106,14 +111,7 @@ export function LandingPage() {
         </h1>
 
         {/* Focused Subtitle */}
-        <p
-          className={`font-body text-base sm:text-lg md:text-xl text-on-surface-variant mt-6 max-w-2xl leading-relaxed transition-all duration-700 delay-200 ${
-            splashFinished ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
-        >
-          The modern, distraction-free publishing platform for writers and thinkers.
-          No algorithms, no invasive ads — just your words and your readers.
-        </p>
+       
 
         {/* Dominant Hero CTA: Maximum Visual Weight */}
         <div
@@ -144,16 +142,17 @@ export function LandingPage() {
       </section>
 
       {/* =========================================================================
-          COMPONENT 2: BENTO GRID SECTION (Full Viewport Stage - Dedicated Screen)
+          COMPONENT 2: BENTO GRID SECTION (Visual-First, High-Impact Showcase)
           ========================================================================= */}
       <section className="relative z-10 min-h-screen flex flex-col justify-center px-6 py-24 sm:py-32 max-w-6xl mx-auto w-full text-left">
         <ScrollReveal animation="fade-up">
           <div className="text-center mb-14 sm:mb-16">
+           
             <h2 className="font-headline text-3xl sm:text-4xl md:text-5xl font-bold text-on-surface tracking-tight">
-              Everything you need to write and publish
+              Crafted for Focus. Built for Readers.
             </h2>
             <p className="text-sm sm:text-base text-on-surface-variant mt-2.5 max-w-lg mx-auto leading-relaxed">
-              Crafted with care to keep you in flow and connect you directly with your audience.
+              Experience publishing stripped down to its purest form.
             </p>
           </div>
         </ScrollReveal>
@@ -161,122 +160,275 @@ export function LandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Bento 1: Distraction-Free Editor (Span 2) */}
           <ScrollReveal animation="fade-up" delayMs={50} className="md:col-span-2">
-            <div className="h-full p-6 sm:p-8 rounded-xl bg-surface/85 backdrop-blur-md border border-outline-variant/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-4 flex flex-col justify-between group">
-              <div className="space-y-2">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  <PenTool className="w-5 h-5" />
+            <div className="h-full p-6 sm:p-8 rounded-2xl bg-surface/90 backdrop-blur-xl border border-outline-variant/50 shadow-sm hover:shadow-2xl hover:border-primary/40 transition-all duration-300 flex flex-col justify-between group overflow-hidden relative">
+              {/* Subtle ambient gradient mesh in background */}
+              <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-bl from-primary/10 via-transparent to-transparent rounded-full pointer-events-none -z-10" />
+
+              <div className="space-y-3 mb-6">
+                <div>
+                  <h3 className="font-headline text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
+                    Distraction-Free Editor
+                  </h3>
+                  <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
+                    Contextual floating formatting, inline code blocks, tables, and instant auto-saving.
+                  </p>
                 </div>
-                <h3 className="font-headline text-xl sm:text-2xl font-bold text-on-surface">
-                  Distraction-Free Editor
-                </h3>
-                <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                  Focus on writing with contextual floating formatting, complete markdown support,
-                  syntax-highlighted code blocks, and interactive table rendering.
-                </p>
               </div>
 
-              {/* Editor Mockup Visual */}
-              <div className="p-4 rounded-lg bg-surface-container-low border border-outline-variant/30 space-y-2.5 font-mono text-xs text-on-surface-variant">
-                <div className="flex items-center justify-between pb-2 border-b border-outline-variant/20 text-[11px]">
-                  <span className="font-sans font-semibold text-on-surface">
-                    Floating Selection Toolbar
-                  </span>
-                  <div className="flex items-center gap-1 px-2 py-0.5 rounded bg-surface border border-outline-variant/40 text-[10px]">
-                    <span className="font-bold">B</span>
-                    <span className="italic">I</span>
-                    <span>Link</span>
-                    <span>Code</span>
+              {/* Rich Visual Editor Mockup */}
+              <div className="p-4 sm:p-5 rounded-xl bg-surface-container-low border border-outline-variant/40 space-y-3 shadow-inner">
+                {/* Floating Glassmorphism Toolbar */}
+                <div className="flex items-center justify-between pb-3 border-b border-outline-variant/30 flex-wrap gap-2">
+                  <div className="inline-flex items-center gap-1 p-1 rounded-lg bg-surface border border-outline-variant/50 shadow-xs text-xs font-medium">
+                    <span className="px-2 py-0.5 rounded bg-surface-container text-on-surface font-bold">B</span>
+                    <span className="px-2 py-0.5 text-on-surface-variant italic font-serif">I</span>
+                    <span className="px-2 py-0.5 text-on-surface-variant line-through">S</span>
+                    <span className="h-3 w-px bg-outline-variant/50 mx-0.5" />
+                    <span className="px-2 py-0.5 rounded bg-primary/15 text-primary font-mono text-[11px] font-semibold flex items-center gap-1">
+                      <Code2 className="w-3 h-3" />
+                      <span>Code</span>
+                    </span>
+                    <span className="px-2 py-0.5 text-on-surface-variant text-[11px]">Link</span>
+                    <span className="px-2 py-0.5 text-on-surface-variant text-[11px]">Table</span>
                   </div>
+
+                 
                 </div>
-                <div className="text-sm font-headline text-on-surface font-bold">
-                  The Architecture of Ideas
+
+                {/* Simulated Article Body */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-1 text-base sm:text-lg font-headline font-bold text-on-surface">
+                    <span>The Architecture of Ideas</span>
+                    <span className="w-0.5 h-5 bg-primary animate-pulse ml-0.5 inline-block" />
+                  </div>
+                  <p className="text-xs text-on-surface-variant leading-relaxed">
+                    When words flow without friction, thinking sharpens. Every paragraph connects seamlessly to build coherent mental models.
+                  </p>
                 </div>
-                <p className="text-[11px] text-on-surface-variant/80 font-sans line-clamp-2">
-                  When words flow without friction, thinking sharpens. Every paragraph connects seamlessly.
-                </p>
+
+                {/* Inline Syntax-Highlighted Code Pill */}
+                <div className="p-3 rounded-lg bg-[#141210] border border-white/10 font-mono text-xs text-[#e6edf3] flex items-center justify-between gap-2 overflow-x-auto">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#f0883e]">export const</span>
+                    <span className="text-[#79c0ff]">dispatch</span>
+                    <span className="text-[#d2a8ff]">=</span>
+                    <span className="text-[#7ee787]">&quot;instant&quot;</span>;
+                  </div>
+                  <span className="text-[10px] text-white/40 uppercase tracking-wider font-sans">
+                    Edge MDX
+                  </span>
+                </div>
+
+                {/* Telemetry Row */}
+                <div className="pt-1 flex items-center justify-between text-[11px] font-mono text-on-surface-variant/70 border-t border-outline-variant/20">
+                  <span>642 words · 3 min read</span>
+                  <span>Markdown &amp; MDX Ready</span>
+                </div>
               </div>
             </div>
           </ScrollReveal>
 
           {/* Bento 2: Personal Publication (Span 1) */}
           <ScrollReveal animation="fade-up" delayMs={150}>
-            <div className="h-full p-6 sm:p-8 rounded-xl bg-surface/85 backdrop-blur-md border border-outline-variant/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-4 flex flex-col justify-between group">
-              <div className="space-y-2">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  <Globe className="w-5 h-5" />
+            <div className="h-full p-6 sm:p-8 rounded-2xl bg-surface/90 backdrop-blur-xl border border-outline-variant/50 shadow-sm hover:shadow-2xl hover:border-blue-500/40 transition-all duration-300 flex flex-col justify-between group overflow-hidden relative">
+              <div className="space-y-3 mb-6">
+               
+                <div>
+                  <h3 className="font-headline text-2xl font-bold text-on-surface tracking-tight">
+                    Your Publication
+                  </h3>
+                  <p className="text-xs text-on-surface-variant mt-1">
+                    Claim your unique namespace with free custom domain connection.
+                  </p>
                 </div>
-                <h3 className="font-headline text-xl font-bold text-on-surface">
-                  Your Publication
-                </h3>
-                <p className="text-xs text-on-surface-variant leading-relaxed">
-                  Claim your clean URL at <span className="font-mono font-semibold text-primary">blogit.pub/@you</span> with custom domain support and themes.
-                </p>
               </div>
 
-              {/* Domain Badge Mockup */}
-              <div className="p-3 rounded-lg bg-surface-container-low border border-outline-variant/30 flex items-center gap-2 text-xs font-mono text-on-surface">
-                <Lock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                <span className="truncate">blogit.pub/@author</span>
+              {/* Browser Address Bar & Domain Mockup */}
+              <div className="p-4 rounded-xl bg-surface-container-low border border-outline-variant/40 space-y-3 shadow-inner">
+                {/* Simulated Browser Chrome */}
+                <div className="flex items-center gap-1.5 pb-2 border-b border-outline-variant/30">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400/80" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
+                  <span className="text-[10px] font-mono text-on-surface-variant/60 ml-2">
+                    publication.preview
+                  </span>
+                </div>
+
+                {/* Subdomain Pill */}
+                <div className="p-2.5 rounded-lg bg-surface border border-outline-variant/40 flex items-center justify-between text-xs font-mono">
+                  <div className="flex items-center gap-2 truncate">
+                    <Lock className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <span className="text-primary font-semibold truncate">blogit.pub/@you</span>
+                  </div>
+                  <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium shrink-0">
+                    Free
+                  </span>
+                </div>
+
+                {/* Custom Root Domain Pill */}
+                <div className="p-2.5 rounded-lg bg-surface border border-outline-variant/40 flex items-center justify-between text-xs font-mono">
+                  <div className="flex items-center gap-2 truncate">
+                    <Lock className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <span className="text-on-surface font-semibold truncate">writings.dev</span>
+                  </div>
+                  <span className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium shrink-0 flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    <span>Active</span>
+                  </span>
+                </div>
+
+                {/* Theme Palette Swatches Preview */}
+                <div className="pt-2 flex items-center justify-between text-[11px] text-on-surface-variant border-t border-outline-variant/20">
+                  <span>Theme palette:</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-3.5 h-3.5 rounded-full bg-amber-600 ring-1 ring-white shadow-2xs" />
+                    <span className="w-3.5 h-3.5 rounded-full bg-indigo-600 ring-1 ring-white shadow-2xs" />
+                    <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 ring-1 ring-white shadow-2xs" />
+                  </div>
+                </div>
               </div>
             </div>
           </ScrollReveal>
 
           {/* Bento 3: Zero Algorithms or Ads (Span 1) */}
           <ScrollReveal animation="fade-up" delayMs={250}>
-            <div className="h-full p-6 sm:p-8 rounded-xl bg-surface/85 backdrop-blur-md border border-outline-variant/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-4 flex flex-col justify-between group">
-              <div className="space-y-2">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  <ShieldCheck className="w-5 h-5" />
+            <div className="h-full p-6 sm:p-8 rounded-2xl bg-surface/90 backdrop-blur-xl border border-outline-variant/50 shadow-sm hover:shadow-2xl hover:border-emerald-500/40 transition-all duration-300 flex flex-col justify-between group overflow-hidden relative">
+              <div className="space-y-3 mb-6">
+               
+                <div>
+                  <h3 className="font-headline text-2xl font-bold text-on-surface tracking-tight">
+                    Zero Algorithms
+                  </h3>
+                  <p className="text-xs text-on-surface-variant mt-1">
+                    Pure chronological delivery. Direct to reader feeds with RSS.
+                  </p>
                 </div>
-                <h3 className="font-headline text-xl font-bold text-on-surface">
-                  Zero Algorithms
-                </h3>
-                <p className="text-xs text-on-surface-variant leading-relaxed">
-                  Pure chronological delivery. No engagement traps or sponsored noise—your stories reach readers directly.
-                </p>
               </div>
 
-              <div className="p-3 rounded-lg bg-surface-container-low border border-outline-variant/30 flex items-center gap-2 text-xs font-medium text-secondary">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                <span>100% Chronological Feed</span>
+              {/* Feed Chronological Stream Visual */}
+              <div className="p-4 rounded-xl bg-surface-container-low border border-outline-variant/40 space-y-2.5 shadow-inner">
+                {/* Timeline Item 1 */}
+                <div className="p-2 rounded-lg bg-surface border border-outline-variant/40 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                    <span className="font-semibold text-on-surface truncate">Modern System Design</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-on-surface-variant shrink-0">Just now</span>
+                </div>
+
+                {/* Timeline Item 2 */}
+                <div className="p-2 rounded-lg bg-surface border border-outline-variant/40 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                    <span className="font-semibold text-on-surface truncate">Principles of Writing</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-on-surface-variant shrink-0">1h ago</span>
+                </div>
+
+                {/* Timeline Item 3 */}
+                <div className="p-2 rounded-lg bg-surface border border-outline-variant/40 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="w-1.5 h-1.5 rounded-full bg-secondary shrink-0" />
+                    <span className="font-semibold text-on-surface truncate">Simplicity in Tech</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-on-surface-variant shrink-0">Yesterday</span>
+                </div>
+
+                {/* Badges */}
+                <div className="pt-2 flex items-center justify-between gap-2 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 border-t border-outline-variant/20">
+                  <span className="inline-flex items-center gap-1">
+                    <Check className="w-3 h-3" />
+                    <span>100% Chronological</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1 font-mono">
+                    <Rss className="w-3 h-3" />
+                    <span>RSS Active</span>
+                  </span>
+                </div>
               </div>
             </div>
           </ScrollReveal>
 
           {/* Bento 4: Writing Streaks & Momentum (Span 2) */}
           <ScrollReveal animation="fade-up" delayMs={350} className="md:col-span-2">
-            <div className="h-full p-6 sm:p-8 rounded-xl bg-surface/85 backdrop-blur-md border border-outline-variant/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 space-y-4 flex flex-col justify-between group">
-              <div className="space-y-2">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  <Flame className="w-5 h-5" />
+            <div className="h-full p-6 sm:p-8 rounded-2xl bg-surface/90 backdrop-blur-xl border border-outline-variant/50 shadow-sm hover:shadow-2xl hover:border-orange-500/40 transition-all duration-300 flex flex-col justify-between group overflow-hidden relative">
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center justify-between">
+                 
+                 
                 </div>
-                <h3 className="font-headline text-xl sm:text-2xl font-bold text-on-surface">
-                  Streak Analytics &amp; Momentum
-                </h3>
-                <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                  Build consistent daily writing habits with GitHub-style contribution heatmaps, word telemetry, and streak rewards.
-                </p>
+                <div>
+                  <h3 className="font-headline text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
+                    Streak Analytics &amp; Momentum
+                  </h3>
+                  <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
+                    Daily telemetry, GitHub-style contribution heatmaps, and habit reinforcement.
+                  </p>
+                </div>
               </div>
 
-              {/* Heatmap Preview Row */}
-              <div className="p-4 rounded-lg bg-surface-container-low border border-outline-variant/30 flex items-center justify-between gap-4 flex-wrap">
-                <div className="flex items-center gap-1.5">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
-                    <span
-                      key={i}
-                      className={`w-3.5 h-3.5 rounded-[2.5px] ${
-                        i % 3 === 0
-                          ? "bg-primary"
-                          : i % 2 === 0
-                          ? "bg-primary/50"
-                          : "bg-surface-container-high"
-                      }`}
-                    />
-                  ))}
+              {/* Rich Contribution Heatmap Matrix Visual */}
+              <div className="p-4 sm:p-5 rounded-xl bg-surface-container-low border border-outline-variant/40 space-y-4 shadow-inner">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  {/* Visual 4x16 Matrix */}
+                  <div className="flex-1 space-y-1.5 overflow-x-auto pb-1">
+                    <div className="grid grid-flow-col grid-rows-4 gap-1.5 w-max">
+                      {[
+                        1, 3, 2, 0, 4, 2, 3, 1, 4, 3, 2, 4, 3, 4, 2, 1,
+                        2, 0, 3, 4, 1, 3, 2, 4, 0, 4, 3, 2, 4, 3, 1, 4,
+                        3, 4, 0, 2, 3, 4, 1, 3, 4, 2, 4, 3, 2, 4, 3, 2,
+                        4, 2, 3, 4, 2, 0, 4, 3, 2, 4, 3, 4, 2, 3, 4, 4,
+                      ].map((intensity, idx) => {
+                        const bgClass =
+                          intensity === 4
+                            ? "bg-primary shadow-[0_0_8px_rgba(var(--color-primary),0.5)]"
+                            : intensity === 3
+                            ? "bg-primary/75"
+                            : intensity === 2
+                            ? "bg-primary/45"
+                            : intensity === 1
+                            ? "bg-primary/20"
+                            : "bg-surface-container-high/60";
+                        return (
+                          <span
+                            key={idx}
+                            className={`w-3.5 h-3.5 rounded-[3px] transition-transform hover:scale-125 cursor-pointer ${bgClass}`}
+                            title={`Activity level: ${intensity}`}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Summary Metric Stats */}
+                  <div className="flex sm:flex-col items-center sm:items-start justify-between sm:justify-center gap-2 sm:pl-6 sm:border-l border-outline-variant/30 text-xs shrink-0">
+                    <div>
+                      <div className="font-mono text-base sm:text-lg font-extrabold text-on-surface">
+                        18,420
+                      </div>
+                      <div className="text-[10px] text-on-surface-variant uppercase tracking-wider">
+                        Words this month
+                      </div>
+                    </div>
+                    <div className="pt-1">
+                      <div className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                        Top: 2,410 words/day
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/15 text-primary text-xs font-semibold">
-                  <Flame className="w-3.5 h-3.5" />
-                  <span>14 Day Active Streak</span>
+
+                <div className="pt-2 flex items-center justify-between text-[11px] text-on-surface-variant border-t border-outline-variant/20">
+                  <span>Writing consistency: 94%</span>
+                  <div className="flex items-center gap-1 text-[10px] font-mono">
+                    <span>Less</span>
+                    <span className="w-2.5 h-2.5 rounded-[2px] bg-surface-container-high" />
+                    <span className="w-2.5 h-2.5 rounded-[2px] bg-primary/25" />
+                    <span className="w-2.5 h-2.5 rounded-[2px] bg-primary/60" />
+                    <span className="w-2.5 h-2.5 rounded-[2px] bg-primary" />
+                    <span>More</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -351,10 +503,7 @@ export function LandingPage() {
               </form>
             )}
 
-            {/* Minimal Reassurance */}
-            <p className="text-[11px] font-mono text-on-surface-variant/60 pt-3 border-t border-outline-variant/30">
-              Zero algorithms · Zero marketing spam · Unsubscribe anytime with 1-click
-            </p>
+           
           </div>
         </ScrollReveal>
       </section>

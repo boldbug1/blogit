@@ -1,7 +1,9 @@
 package api
 
 import (
+  "compress/gzip"
   "context"
+  "io"
   "net/http"
   "os"
   "strings"
@@ -66,5 +68,33 @@ func (s *Server) EnableCORS(next http.Handler) http.Handler {
     }
 
     next.ServeHTTP(w, r)
+  })
+}
+
+type gzipResponseWriter struct {
+  http.ResponseWriter
+  writer io.Writer
+}
+
+func (w *gzipResponseWriter) Write(b []byte) (int, error) {
+  return w.writer.Write(b)
+}
+
+func (s *Server) CompressResponse(next http.Handler) http.Handler {
+  return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    if strings.HasPrefix(r.URL.Path, "/media/") || !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+      next.ServeHTTP(w, r)
+      return
+    }
+
+    w.Header().Set("Content-Encoding", "gzip")
+    w.Header().Add("Vary", "Accept-Encoding")
+    w.Header().Del("Content-Length")
+
+    gz := gzip.NewWriter(w)
+    defer gz.Close()
+
+    gzw := &gzipResponseWriter{ResponseWriter: w, writer: gz}
+    next.ServeHTTP(gzw, r)
   })
 }

@@ -26,6 +26,7 @@ import {
   X,
   Sun,
   Moon,
+  Type,
 } from "lucide-react";
 
 export default function SettingsPage() {
@@ -44,6 +45,9 @@ export default function SettingsPage() {
     resetThemes,
     exportThemesJSON,
     importThemesJSON,
+    fonts,
+    activeFontId,
+    setFont,
   } = useTheme();
 
   React.useEffect(() => {
@@ -782,6 +786,70 @@ export default function SettingsPage() {
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Typography & Font System Section */}
+            <div className="p-6 sm:p-8 rounded-lg bg-surface shadow-sm border border-outline-variant/30 space-y-6">
+              <div className="flex items-center justify-between pb-3 border-b border-outline-variant/20">
+                <div className="flex items-center gap-2.5">
+                  <Type className="w-5 h-5 text-primary" />
+                  <div>
+                    <h3 className="font-headline text-xl font-bold text-on-surface">
+                      Typography &amp; Fonts
+                    </h3>
+                    <p className="text-[11px] text-on-surface-variant">
+                      Dynamically switch font pairings across the entire platform in real time
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                {fonts.map((f) => {
+                  const isSelected = activeFontId === f.id;
+                  return (
+                    <div
+                      key={f.id}
+                      onClick={() => setFont(f.id)}
+                      className={`p-4 rounded-xl border-2 text-left transition-all relative flex flex-col justify-between group cursor-pointer ${
+                        isSelected
+                          ? "border-primary bg-primary/5 shadow-xs"
+                          : "border-outline-variant/40 hover:border-outline-variant/80 bg-surface-container-lowest"
+                      }`}
+                    >
+                      <div className="mb-3">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <span className="font-bold text-sm text-on-surface">
+                            {f.name}
+                          </span>
+                          {isSelected && (
+                            <span className="w-2 h-2 rounded-full bg-primary ring-4 ring-primary/20" />
+                          )}
+                        </div>
+                        <p className="text-[11px] text-on-surface-variant leading-relaxed">
+                          {f.description}
+                        </p>
+                      </div>
+
+                      {/* Live font sample preview */}
+                      <div
+                        className="p-3 rounded-lg bg-surface-container-low/70 border border-outline-variant/30 space-y-1"
+                        style={{ fontFamily: f.body }}
+                      >
+                        <div
+                          className="font-bold text-sm text-on-surface tracking-tight truncate"
+                          style={{ fontFamily: f.headline }}
+                        >
+                          Don&apos;t just think, blog it.
+                        </div>
+                        <div className="text-[11px] text-on-surface-variant line-clamp-1">
+                          The quick brown fox jumps over the lazy dog.
+                        </div>
                       </div>
                     </div>
                   );

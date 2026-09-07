@@ -60,7 +60,7 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("DELETE /blogs/{id}", s.RequireAuth(s.writeLimiter.Middleware(s.handleDeleteBlog)))
 	mux.HandleFunc("POST /blogs/{id}/like", s.RequireAuth(s.writeLimiter.Middleware(s.handleToggleLike)))
 	mux.HandleFunc("POST /blogs/{id}/comments", s.RequireAuth(s.writeLimiter.Middleware(s.handleCreateComment)))
-	return s.EnableCORS(mux)
+	return s.EnableCORS(s.CompressResponse(mux))
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {

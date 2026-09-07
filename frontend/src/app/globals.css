@@ -55,7 +55,7 @@
     padding: 0;
     background-color: var(--color-background, #ffffff);
     color: var(--color-on-background, #0f172a);
-    font-family: var(--font-manrope), sans-serif;
+    font-family: var(--font-body, var(--font-manrope)), -apple-system, sans-serif;
     scroll-behavior: smooth;
     overflow-x: hidden;
     max-width: 100vw;

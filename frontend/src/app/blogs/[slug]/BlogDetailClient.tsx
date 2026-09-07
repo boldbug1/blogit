@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
@@ -31,7 +31,7 @@ export default function BlogDetailClient({ slug }: BlogDetailClientProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [readingProgress, setReadingProgress] = useState(0);
+  const progressBarRef = useRef<HTMLDivElement>(null);
 
   // Likes and Comments
   const [likesCount, setLikesCount] = useState(0);
@@ -75,13 +75,28 @@ export default function BlogDetailClient({ slug }: BlogDetailClientProps) {
     }
   }, [blog, user]);
 
+  // Zero re-render reading progress bar: updates DOM directly via RAF
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const totalScroll =
-        document.documentElement.scrollHeight - window.innerHeight;
-      if (totalScroll > 0) {
-        const currentProgress = (window.scrollY / totalScroll) * 100;
-        setReadingProgress(Math.min(100, Math.max(0, currentProgress)));
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const totalScroll =
+            document.documentElement.scrollHeight - window.innerHeight;
+          if (totalScroll > 0 && progressBarRef.current) {
+            const currentProgress = Math.min(
+              100,
+              Math.max(0, (window.scrollY / totalScroll) * 100)
+            );
+            progressBarRef.current.style.width = `${currentProgress}%`;
+            progressBarRef.current.setAttribute(
+              "aria-valuenow",
+              String(Math.round(currentProgress))
+            );
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -189,16 +204,15 @@ export default function BlogDetailClient({ slug }: BlogDetailClientProps) {
         aria-hidden="true"
       />
       <div
-        className="fixed top-0 left-0 h-[2.5px] bg-primary z-[100] transition-[width] duration-150 ease-out pointer-events-none shadow-[0_1px_6px_rgba(0,0,0,0.15)]"
-        style={{ width: `${readingProgress}%` }}
+        ref={progressBarRef}
+        className="fixed top-0 left-0 h-[2.5px] bg-primary z-[100] transition-[width] duration-75 ease-out pointer-events-none shadow-[0_1px_6px_rgba(0,0,0,0.15)]"
+        style={{ width: "0%" }}
         role="progressbar"
-        aria-valuenow={Math.round(readingProgress)}
+        aria-valuenow={0}
         aria-valuemin={0}
         aria-valuemax={100}
       >
-        {readingProgress > 0 && (
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
-        )}
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
       </div>
 
       <Navbar />

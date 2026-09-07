@@ -19,6 +19,8 @@ import {
   ArrowRight,
   Sun,
   Moon,
+  Type,
+  Check,
 } from "lucide-react";
 
 const POPULAR_TOPICS = [
@@ -98,16 +100,18 @@ function SearchInput() {
 
 export function Navbar() {
   const { user, logout } = useAuth();
-  const { mode, toggleMode } = useTheme();
+  const { mode, toggleMode, fonts, activeFontId, setFont } = useTheme();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [fontMenuOpen, setFontMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Close sidebar on Escape and lock background scroll
+  // Close menus on Escape and lock background scroll
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setSidebarOpen(false);
         setDropdownOpen(false);
+        setFontMenuOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -168,6 +172,59 @@ export function Navbar() {
                 )}
               </button>
             )}
+
+            {/* Dynamic Font Switcher Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setFontMenuOpen(!fontMenuOpen)}
+                className="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center gap-1"
+                aria-label="Change font pairing"
+                title={`Typography: ${fonts.find((f) => f.id === activeFontId)?.name || "Font"}`}
+              >
+                <Type className="w-4 h-4 text-secondary hover:text-on-surface" />
+              </button>
+
+              {fontMenuOpen && (
+                <div
+                  className="absolute right-0 mt-2 w-56 bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant/40 py-1.5 z-50 text-xs animate-in fade-in zoom-in-95 duration-150"
+                  onMouseLeave={() => setFontMenuOpen(false)}
+                >
+                  <div className="px-3 py-1.5 border-b border-outline-variant/20 font-semibold text-on-surface-variant uppercase tracking-wider text-[10px]">
+                    Typography Pairings
+                  </div>
+                  <div className="py-1">
+                    {fonts.map((f) => (
+                      <button
+                        key={f.id}
+                        type="button"
+                        onClick={() => {
+                          setFont(f.id);
+                          setFontMenuOpen(false);
+                        }}
+                        className={`w-full px-3 py-2 text-left flex items-center justify-between hover:bg-surface-container transition-colors cursor-pointer ${
+                          activeFontId === f.id
+                            ? "text-primary font-bold bg-primary/10"
+                            : "text-on-surface"
+                        }`}
+                      >
+                        <div className="truncate pr-2">
+                          <div style={{ fontFamily: f.headline }} className="text-xs">
+                            {f.name}
+                          </div>
+                          <div className="text-[10px] text-on-surface-variant/70 font-sans truncate">
+                            {f.category.toUpperCase()}
+                          </div>
+                        </div>
+                        {activeFontId === f.id && (
+                          <Check className="w-3.5 h-3.5 text-primary shrink-0" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Write Button */}
             <Link

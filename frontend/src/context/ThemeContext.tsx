@@ -31,6 +31,70 @@ export interface Theme {
   isCustom?: boolean;
 }
 
+export interface FontPreset {
+  id: string;
+  name: string;
+  category: "sans" | "serif" | "system" | "mono";
+  headline: string;
+  body: string;
+  description: string;
+  googleFontFamily?: string;
+}
+
+export const FONT_PRESETS: FontPreset[] = [
+  {
+    id: "system",
+    name: "Apple / System UI",
+    category: "system",
+    headline: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif',
+    body: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif',
+    description: "Native Apple & OS system typography. Ultra crisp, zero network latency.",
+  },
+  {
+    id: "lato",
+    name: "Lato Modern",
+    category: "sans",
+    headline: '"Lato", -apple-system, BlinkMacSystemFont, sans-serif',
+    body: '"Lato", -apple-system, BlinkMacSystemFont, sans-serif',
+    description: "Warm, humanist sans-serif designed for serious yet friendly reading.",
+    googleFontFamily: "Lato:wght@300;400;700;900",
+  },
+  {
+    id: "garamond",
+    name: "Editorial Garamond",
+    category: "serif",
+    headline: 'var(--font-eb-garamond), Georgia, serif',
+    body: 'var(--font-manrope), -apple-system, sans-serif',
+    description: "Classic literary pairing: EB Garamond headlines with modern Manrope body.",
+  },
+  {
+    id: "inter",
+    name: "Swiss Inter",
+    category: "sans",
+    headline: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+    body: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+    description: "World-class digital interface typography with pixel-perfect legibility.",
+    googleFontFamily: "Inter:wght@400;500;600;700;800",
+  },
+  {
+    id: "charter",
+    name: "Literary Charter",
+    category: "serif",
+    headline: 'Charter, "Bitstream Charter", "Sitka Text", Cambria, serif',
+    body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    description: "Designed for long-form reading clarity with crisp bookish serifs.",
+  },
+  {
+    id: "mono",
+    name: "Technical Mono",
+    category: "mono",
+    headline: '"JetBrains Mono", "SF Mono", "Cascadia Code", monospace',
+    body: '"JetBrains Mono", "SF Mono", "Cascadia Code", monospace',
+    description: "Modern developer monospace aesthetic for technical dispatches.",
+    googleFontFamily: "JetBrains+Mono:wght@400;600;700",
+  },
+];
+
 interface ThemeContextType {
   themes: Theme[];
   activeTheme: Theme;
@@ -44,6 +108,11 @@ interface ThemeContextType {
   resetThemes: () => void;
   exportThemesJSON: () => string;
   importThemesJSON: (jsonStr: string) => boolean;
+  // Dynamic Font System
+  fonts: FontPreset[];
+  activeFont: FontPreset;
+  activeFontId: string;
+  setFont: (fontId: string) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -142,6 +211,28 @@ export function applyThemeToDOM(theme: Theme, mode: ColorMode) {
   root.setAttribute("data-mode", mode);
 }
 
+export function applyFontToDOM(font: FontPreset) {
+  if (typeof document === "undefined") return;
+
+  // Dynamically load Google Font stylesheet if required
+  if (font.googleFontFamily) {
+    const fontLinkId = `google-font-${font.id}`;
+    if (!document.getElementById(fontLinkId)) {
+      const link = document.createElement("link");
+      link.id = fontLinkId;
+      link.rel = "stylesheet";
+      link.href = `https://fonts.googleapis.com/css2?family=${font.googleFontFamily}&display=swap`;
+      document.head.appendChild(link);
+    }
+  }
+
+  const root = document.documentElement;
+  root.style.setProperty("--font-headline", font.headline);
+  root.style.setProperty("--font-body", font.body);
+  root.style.setProperty("--font-sans", font.body);
+  root.setAttribute("data-font", font.id);
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [themes, setThemes] = useState<Theme[]>(
@@ -149,6 +240,30 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
   const [activeThemeId, setActiveThemeId] = useState<string>("sahara");
   const [mode, setModeState] = useState<ColorMode>("light");
+  const [activeFontId, setActiveFontId] = useState<string>("garamond");
+
+  // Load active font on mount
+  useEffect(() => {
+    try {
+      const savedFontId = localStorage.getItem("blogit_active_font") || "garamond";
+      const targetFont = FONT_PRESETS.find((f) => f.id === savedFontId) || FONT_PRESETS[2];
+      setActiveFontId(targetFont.id);
+      applyFontToDOM(targetFont);
+    } catch (e) {
+      console.error("Failed to load user font preference:", e);
+    }
+  }, []);
+
+  const setFont = (fontId: string) => {
+    const targetFont = FONT_PRESETS.find((f) => f.id === fontId);
+    if (!targetFont) return;
+    setActiveFontId(fontId);
+    localStorage.setItem("blogit_active_font", fontId);
+    applyFontToDOM(targetFont);
+  };
+
+  const activeFont =
+    FONT_PRESETS.find((f) => f.id === activeFontId) || FONT_PRESETS[2];
 
   // Load custom themes from localStorage on client mount
   useEffect(() => {
@@ -334,6 +449,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         resetThemes,
         exportThemesJSON,
         importThemesJSON,
+        // Font system
+        fonts: FONT_PRESETS,
+        activeFont,
+        activeFontId,
+        setFont,
       }}
     >
       {children}

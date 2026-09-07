@@ -45,9 +45,9 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-screen flex flex-col bg-surface text-on-surface relative selection:bg-primary/20 selection:text-primary transition-colors duration-300"
       >
-        {/* Tactile paper texture micro-grain overlay */}
+        {/* Tactile paper texture micro-grain overlay (GPU composited without blend mode) */}
         <div
-          className="fixed inset-0 pointer-events-none -z-10 opacity-[0.045] mix-blend-multiply paper-grain"
+          className="fixed inset-0 pointer-events-none -z-10 opacity-[0.03] paper-grain transform-gpu"
           aria-hidden="true"
         />
         <AuthProvider>

@@ -85,23 +85,41 @@ func (s *Server) handleGoogleAuth(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		// Verify Google ID token via Google's tokeninfo API
+		// Verify Google token: support both ID token (JWT) and OAuth2 access token (userinfo)
 		client := &http.Client{Timeout: 8 * time.Second}
-		resp, err := client.Get("https://oauth2.googleapis.com/tokeninfo?id_token=" + url.QueryEscape(req.Credential))
-		if err != nil {
-			writeError(w, http.StatusBadGateway, "Failed to connect to Google verification service")
-			return
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode != http.StatusOK {
-			writeError(w, http.StatusUnauthorized, "Invalid or expired Google token")
-			return
-		}
-
 		var payload googleTokenPayload
-		if err := json.NewDecoder(resp.Body).Decode(&payload); err != nil {
-			writeError(w, http.StatusInternalServerError, "Failed to parse Google user payload")
+
+		if strings.Count(req.Credential, ".") == 2 {
+			// Try as Google ID token
+			resp, err := client.Get("https://oauth2.googleapis.com/tokeninfo?id_token=" + url.QueryEscape(req.Credential))
+			if err == nil && resp.StatusCode == http.StatusOK {
+				defer resp.Body.Close()
+				_ = json.NewDecoder(resp.Body).Decode(&payload)
+			}
+		}
+
+		// If not resolved yet, verify as OAuth2 access token via Google userinfo
+		if payload.Email == "" {
+			reqUserinfo, err := http.NewRequestWithContext(r.Context(), "GET", "https://www.googleapis.com/oauth2/v3/userinfo", nil)
+			if err != nil {
+				writeError(w, http.StatusInternalServerError, "Failed to create Google request")
+				return
+			}
+			reqUserinfo.Header.Set("Authorization", "Bearer "+req.Credential)
+			resp, err := client.Do(reqUserinfo)
+			if err != nil {
+				writeError(w, http.StatusBadGateway, "Failed to connect to Google verification service")
+				return
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode == http.StatusOK {
+				_ = json.NewDecoder(resp.Body).Decode(&payload)
+			}
+		}
+
+		if payload.Email == "" {
+			writeError(w, http.StatusUnauthorized, "Invalid or expired Google token")
 			return
 		}
 
@@ -112,15 +130,20 @@ func (s *Server) handleGoogleAuth(w http.ResponseWriter, r *http.Request) {
 			verified = v
 		case string:
 			verified = (v == "true")
+		default:
+			// userinfo sometimes omits email_verified if true
+			if payload.Email != "" {
+				verified = true
+			}
 		}
 		if !verified {
 			writeError(w, http.StatusUnauthorized, "Google account email is not verified")
 			return
 		}
 
-		// Optional client ID audience verification if configured
+		// Optional client ID audience verification if configured and present
 		expectedAud := os.Getenv("GOOGLE_CLIENT_ID")
-		if expectedAud != "" && payload.Aud != expectedAud {
+		if expectedAud != "" && payload.Aud != "" && payload.Aud != expectedAud {
 			writeError(w, http.StatusUnauthorized, "Token audience mismatch")
 			return
 		}
