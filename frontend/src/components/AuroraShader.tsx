@@ -248,57 +248,17 @@ export function AuroraShader({
       };
     }
 
-    // Pause rendering when tab is hidden or canvas is scrolled out of viewport
-    let isOutOfView = false;
+    // Pause rendering when tab is hidden to save resources
     const handleVisibilityChange = () => {
-      isRunning = !document.hidden && !isOutOfView;
-      if (isRunning && !animFrameId) {
+      isRunning = !document.hidden;
+      if (isRunning) {
         animFrameId = requestAnimationFrame(render);
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // Pause when user has scrolled past hero section to conserve 100% GPU
-    let scrollScheduled = false;
-    const handleScroll = () => {
-      if (!scrollScheduled) {
-        scrollScheduled = true;
-        requestAnimationFrame(() => {
-          const scrolledPast = window.scrollY > window.innerHeight * 1.15;
-          if (scrolledPast !== isOutOfView) {
-            isOutOfView = scrolledPast;
-            if (!isOutOfView && !document.hidden) {
-              isRunning = true;
-              if (!animFrameId) {
-                animFrameId = requestAnimationFrame(render);
-              }
-            } else {
-              isRunning = false;
-            }
-          }
-          scrollScheduled = false;
-        });
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    // Frame throttling: 35fps on mobile (<768px) cuts mobile GPU draw calls by ~70%, 60fps on desktop
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-    const minFrameInterval = isMobile ? 1000 / 35 : 1000 / 60;
-    let lastFrameTime = 0;
-
     function render(time: number) {
-      if (!isRunning || !gl || !canvas) {
-        animFrameId = 0;
-        return;
-      }
-
-      // Frame rate throttle for battery/thermal efficiency
-      if (time - lastFrameTime < minFrameInterval) {
-        animFrameId = requestAnimationFrame(render);
-        return;
-      }
-      lastFrameTime = time;
+      if (!isRunning || !gl || !canvas) return;
 
       // Smooth spring damping
       const dx = targetMouse.x - currentMouse.x;
@@ -324,7 +284,6 @@ export function AuroraShader({
       window.removeEventListener("resize", handleWindowResize);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("scroll", handleScroll);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       cancelAnimationFrame(animFrameId);
     };

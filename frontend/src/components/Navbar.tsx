@@ -19,8 +19,6 @@ import {
   ArrowRight,
   Sun,
   Moon,
-  Type,
-  Check,
 } from "lucide-react";
 
 const POPULAR_TOPICS = [
@@ -100,10 +98,17 @@ function SearchInput() {
 
 export function Navbar() {
   const { user, logout } = useAuth();
-  const { mode, toggleMode, fonts, activeFontId, setFont } = useTheme();
+  const { mode, toggleMode } = useTheme();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [fontMenuOpen, setFontMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const pathname = usePathname();
+
+  // Close drawer and dropdown on route change
+  useEffect(() => {
+    setSidebarOpen(false);
+    setDropdownOpen(false);
+  }, [pathname]);
 
   // Close menus on Escape and lock background scroll
   useEffect(() => {
@@ -111,7 +116,6 @@ export function Navbar() {
       if (e.key === "Escape") {
         setSidebarOpen(false);
         setDropdownOpen(false);
-        setFontMenuOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -154,14 +158,14 @@ export function Navbar() {
             </Suspense>
           </div>
 
-          {/* Right: Theme Toggle, Write Button and User Profile / Auth */}
+          {/* Right: Theme Toggle (Desktop), Write Button and User Profile / Auth */}
           <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            {/* Dark / Light Mode Toggle: Signed-in users only */}
+            {/* Dark / Light Mode Toggle: Desktop only (on mobile it is in the profile dropdown) */}
             {user && (
               <button
                 type="button"
                 onClick={toggleMode}
-                className="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                className="hidden sm:flex p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
                 aria-label="Toggle dark mode"
                 title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
               >
@@ -172,59 +176,6 @@ export function Navbar() {
                 )}
               </button>
             )}
-
-            {/* Dynamic Font Switcher Dropdown */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setFontMenuOpen(!fontMenuOpen)}
-                className="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center gap-1"
-                aria-label="Change font pairing"
-                title={`Typography: ${fonts.find((f) => f.id === activeFontId)?.name || "Font"}`}
-              >
-                <Type className="w-4 h-4 text-secondary hover:text-on-surface" />
-              </button>
-
-              {fontMenuOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-56 bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant/40 py-1.5 z-50 text-xs animate-in fade-in zoom-in-95 duration-150"
-                  onMouseLeave={() => setFontMenuOpen(false)}
-                >
-                  <div className="px-3 py-1.5 border-b border-outline-variant/20 font-semibold text-on-surface-variant uppercase tracking-wider text-[10px]">
-                    Typography Pairings
-                  </div>
-                  <div className="py-1">
-                    {fonts.map((f) => (
-                      <button
-                        key={f.id}
-                        type="button"
-                        onClick={() => {
-                          setFont(f.id);
-                          setFontMenuOpen(false);
-                        }}
-                        className={`w-full px-3 py-2 text-left flex items-center justify-between hover:bg-surface-container transition-colors cursor-pointer ${
-                          activeFontId === f.id
-                            ? "text-primary font-bold bg-primary/10"
-                            : "text-on-surface"
-                        }`}
-                      >
-                        <div className="truncate pr-2">
-                          <div style={{ fontFamily: f.headline }} className="text-xs">
-                            {f.name}
-                          </div>
-                          <div className="text-[10px] text-on-surface-variant/70 font-sans truncate">
-                            {f.category.toUpperCase()}
-                          </div>
-                        </div>
-                        {activeFontId === f.id && (
-                          <Check className="w-3.5 h-3.5 text-primary shrink-0" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
 
             {/* Write Button */}
             <Link
@@ -295,6 +246,25 @@ export function Navbar() {
                       <span>Settings</span>
                     </Link>
 
+                    {/* Dark / Light Mode toggle in dropdown */}
+                    <button
+                      type="button"
+                      onClick={toggleMode}
+                      className="w-full flex items-center justify-between px-4 py-2 text-on-surface hover:bg-surface-container transition-colors text-left"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        {mode === "dark" ? (
+                          <Sun className="w-4 h-4 text-secondary" />
+                        ) : (
+                          <Moon className="w-4 h-4 text-secondary" />
+                        )}
+                        <span>{mode === "dark" ? "Light Mode" : "Dark Mode"}</span>
+                      </span>
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-on-surface-variant/70 bg-surface-container-low px-1.5 py-0.5 rounded border border-outline-variant/30">
+                        {mode}
+                      </span>
+                    </button>
+
                     <div className="border-t border-outline-variant/20 my-1" />
 
                     <button
@@ -332,17 +302,17 @@ export function Navbar() {
 
       {/* Slide-over Left Navigation Sidebar Drawer */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-50 flex">
+        <div className="fixed inset-0 z-50">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/35 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
             onClick={() => setSidebarOpen(false)}
             aria-hidden="true"
           />
 
           {/* Drawer Sheet */}
-          <aside className="relative w-72 sm:w-80 max-w-[85vw] bg-surface border-r border-outline-variant/30 shadow-2xl z-50 p-6 flex flex-col justify-between animate-in slide-in-from-left duration-200">
-            <div className="space-y-6">
+          <aside className="fixed inset-y-0 left-0 w-72 sm:w-80 max-w-[85vw] h-full max-h-[100dvh] bg-surface border-r border-outline-variant/30 shadow-2xl z-50 p-6 flex flex-col justify-between overflow-y-auto shrink-0 animate-in slide-in-from-left duration-200">
+            <div className="space-y-6 flex-1 min-h-0">
               {/* Header inside Drawer */}
               <div className="flex items-center justify-between pb-4 border-b border-outline-variant/30">
                 <Logo href="/" />
@@ -425,7 +395,7 @@ export function Navbar() {
 
             {/* Theme Mode row inside drawer: Signed-in users only */}
             {user && (
-              <div className="py-3 border-t border-outline-variant/30 flex items-center justify-between">
+              <div className="py-3 border-t border-outline-variant/30 flex items-center justify-between shrink-0">
                 <span className="text-xs font-medium text-on-surface flex items-center gap-2">
                   {mode === "dark" ? (
                     <Moon className="w-4 h-4 text-secondary" />
@@ -445,7 +415,7 @@ export function Navbar() {
             )}
 
             {/* Bottom Account / Auth Block in Drawer */}
-            <div className="pt-3 border-t border-outline-variant/30">
+            <div className="pt-3 border-t border-outline-variant/30 shrink-0">
               {user ? (
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 px-2">
